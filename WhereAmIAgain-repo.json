@@ -1,0 +1,22 @@
+[
+  {
+    "Author": "Qasi Molkot @ Exodus",
+    "Name": "Where am I again?",
+    "Description": "See where your character is at all times.",
+    "InternalName": "WhereAmIAgain",
+    "AssemblyVersion": "0.0.0.1",
+    "TestingAssemblyVersion": "0.0.0.1",
+    "RepoUrl": "https://github.com/cassandra308/WhereAmIAgain",
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 5,
+    "IsHide": "False",
+    "IsTestingExclusive": "False",
+    "DownloadCount": 69420,
+    "LastUpdate": 0,
+    "LoadPriority": 69420,
+    "DownloadLinkInstall": "https://github.com/cassandra308/WhereAmIAgain/releases/download/0.0.0.1/WhereAmIAgain.zip",
+    "DownloadLinkTesting": "https://github.com/cassandra308/WhereAmIAgain/download/0.0.0.1/WhereAmIAgain.zip",
+    "DownloadLinkUpdate": "https://github.com/cassandra308/WhereAmIAgain/releases/download/0.0.0.1/WhereAmIAgain.zip",
+    "IconUrl": "https://raw.githubusercontent.com/cassandra308/WhereAmIAgain/main/icon.png"
+  }
+]
