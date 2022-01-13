@@ -1,5 +1,4 @@
 C:\Users\User\AppData\Roaming\XIVLauncher\devPlugins\WhereAmIAgain\WhereAmIAgain.json
-C:\Users\User\AppData\Roaming\XIVLauncher\devPlugins\WhereAmIAgain\goat.png
 C:\Users\User\AppData\Roaming\XIVLauncher\devPlugins\WhereAmIAgain\WhereAmIAgain.deps.json
 C:\Users\User\AppData\Roaming\XIVLauncher\devPlugins\WhereAmIAgain\WhereAmIAgain.dll
 C:\Users\User\AppData\Roaming\XIVLauncher\devPlugins\WhereAmIAgain\WhereAmIAgain.pdb
@@ -9,3 +8,4 @@ F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Debug\WhereAmIAgain.AssemblyInfo.cs
 F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Debug\WhereAmIAgain.csproj.CoreCompileInputs.cache
 F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Debug\WhereAmIAgain.dll
 F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Debug\WhereAmIAgain.pdb
+F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Debug\WhereAmIAgain.csproj.AssemblyReference.cache
