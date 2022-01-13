@@ -24,7 +24,7 @@ namespace WhereAmIAgain
         internal static ClientState ClientState { get; private set; }
         [PluginService]
         internal static Framework Framework { get; private set; }
-        public readonly string[] notZones = { "retainer", "equipped", "sale", "guildhest", "regist", "markets" };
+        public readonly string[] notZones = { "retainer", "equipped", "sale", "guildhest", "regist", "markets", "compass", "current", "sampling", "playing", "orchestrion" };
         private List<TerritoryType> Territories;
         public string playerZone = "";
         private void UpdateLocation(Framework framework)
@@ -57,6 +57,10 @@ namespace WhereAmIAgain
                 }
                 // framework.Gui.Chat.PrintError("Could not start \"Hey, Dalamud!\".\nPlease make sure that you have the American English Windows Language Pack installed.");
                 PluginLog.Log(territoryName, territoryRegion);
+                if (this.territoryName != territoryName || this.territoryRegion != territoryRegion)
+                {
+                    this.playerZone = "";
+                }
                 this.territoryName = territoryName;
                 this.territoryRegion = territoryRegion;
                 var locationString  = $"{territoryName}, {territoryRegion}";
