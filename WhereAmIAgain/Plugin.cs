@@ -150,7 +150,7 @@ namespace WhereAmIAgain
         private void OnToast(ref SeString message, ref ToastOptions options, ref bool ishandled)
         {
             var text = $"{message}";
-            var isFiltered = Array.FindAll(this.notZones, notZone => text.Contains(notZone)).Length > 0;
+            var isFiltered = Array.FindAll(this.notZones, notZone => text.ToLower().Contains(notZone)).Length > 0;
             if (!isFiltered)
             {
                 this.playerZone = text;
