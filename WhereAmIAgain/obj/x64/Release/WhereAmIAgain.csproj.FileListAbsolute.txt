@@ -8,3 +8,4 @@ F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.AssemblyInfo.
 F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.csproj.CoreCompileInputs.cache
 F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.dll
 F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.pdb
+F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.csproj.AssemblyReference.cache

@@ -13,7 +13,7 @@ using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("WhereAmIAgain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
-[assembly: System.Reflection.AssemblyDescriptionAttribute("A sample plugin.")]
+[assembly: System.Reflection.AssemblyDescriptionAttribute("Show yourself your location.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("0.0.0.1")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.0.0.1")]
 [assembly: System.Reflection.AssemblyProductAttribute("WhereAmIAgain")]
