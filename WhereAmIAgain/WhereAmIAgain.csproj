@@ -6,7 +6,7 @@
     <Version>0.0.0.1</Version>
     <Description>A sample plugin.</Description>
     <Copyright></Copyright>
-    <PackageProjectUrl>https://github.com/goatcorp/WhereAmIAgain</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/cassandra308/WhereAmIAgain</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -21,12 +21,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\Data\WhereAmIAgain.json">
+    <Content Include=".\whereAmIAgain.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\Data\goat.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>false</Visible>
     </Content>
   </ItemGroup>
 
