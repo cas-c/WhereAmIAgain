@@ -1,0 +1,17 @@
+{
+  "Author": "Qasi Molkot",
+  "Name": "Where am I again?",
+  "Punchline": "Shows what zone/region you are in, always.",
+  "Description": "Shows what zone/region you are in up in the corner next to the server info. Open config with /locpls. Does not play nicely with Orchestrion (/porch) when the 'Show current song in the server info UI element in-game' is enabled, since it uses the same spot.",
+  "InternalName": "whereAmIAgain",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "location",
+    "position",
+    "area",
+    "zone",
+    "region",
+    "territory",
+    "ui"
+  ]
+}
