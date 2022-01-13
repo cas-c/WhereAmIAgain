@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors></Authors>
     <Company></Company>
-    <Version>0.0.0.1</Version>
+    <Version>0.0.0.2</Version>
     <Description>Show yourself your location.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/cassandra308/WhereAmIAgain</PackageProjectUrl>
