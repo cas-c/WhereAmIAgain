@@ -13,5 +13,7 @@
     "region",
     "territory",
     "ui"
-  ]
+  ],
+  "RepoUrl": "https://github.com/cassandra308/WhereAmIAgain",
+  "IconUrl": "https://raw.githubusercontent.com/cassandra308/WhereAmIAgain/main/icon.png"
 }

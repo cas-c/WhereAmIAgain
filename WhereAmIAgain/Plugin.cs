@@ -24,7 +24,8 @@ namespace WhereAmIAgain
         internal static ClientState ClientState { get; private set; }
         [PluginService]
         internal static Framework Framework { get; private set; }
-        public readonly string[] notZones = { "retainer", "equipped", "sale", "guildhest", "regist", "markets", "compass", "current", "sampling", "playing", "orchestrion", ".", "action ", "!", "]" };
+        // public readonly string[] notZones = { "retainer", "equipped", "sale", "guildhest", "regist", "markets", "compass", "current", "sampling", "playing", "orchestrion", ".", "action ", "!", "]" };
+        public readonly string[] notZones = {  ".", "!", "]" };
         private List<TerritoryType> Territories;
         public string playerZone = "";
         private void UpdateLocation(Framework framework)

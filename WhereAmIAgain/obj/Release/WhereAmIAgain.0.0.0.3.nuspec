@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>WhereAmIAgain</id>
+    <version>0.0.0.3</version>
+    <authors>WhereAmIAgain</authors>
+    <projectUrl>https://github.com/cassandra308/WhereAmIAgain</projectUrl>
+    <description>Show yourself your location.</description>
+    <dependencies>
+      <group targetFramework="net5.0-windows7.0">
+        <dependency id="DalamudPackager" version="2.1.5" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <contentFiles>
+      <files include="any/net5.0-windows7.0/./WhereAmIAgain.json" buildAction="Content" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="C:\Users\User\AppData\Roaming\XIVLauncher\devPlugins\WhereAmIAgain\WhereAmIAgain.dll" target="lib\net5.0-windows7.0\WhereAmIAgain.dll" />
+    <file src="F:\dev\WhereAmIAgainVS\WhereAmIAgain\WhereAmIAgain.json" target="content\.\WhereAmIAgain.json" />
+    <file src="F:\dev\WhereAmIAgainVS\WhereAmIAgain\WhereAmIAgain.json" target="contentFiles\any\net5.0-windows7.0\.\WhereAmIAgain.json" />
+  </files>
+</package>
