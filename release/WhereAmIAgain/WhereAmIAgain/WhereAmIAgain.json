@@ -1,0 +1,22 @@
+{
+  "Author": "Qasi Molkot",
+  "Name": "Where am I again?",
+  "InternalName": "WhereAmIAgain",
+  "AssemblyVersion": "0.0.0.3",
+  "Description": "Shows what zone/region you are in up in the corner next to the server info. Open config with /locpls. Does not play nicely with Orchestrion (/porch) when the 'Show current song in the server info UI element in-game' is enabled, since it uses the same spot.",
+  "ApplicableVersion": "any",
+  "RepoUrl": "https://github.com/cassandra308/WhereAmIAgain",
+  "Tags": [
+    "location",
+    "position",
+    "area",
+    "zone",
+    "region",
+    "territory",
+    "ui"
+  ],
+  "DalamudApiLevel": 5,
+  "LoadPriority": 0,
+  "IconUrl": "https://raw.githubusercontent.com/cassandra308/WhereAmIAgain/main/icon.png",
+  "Punchline": "Shows what zone/region you are in, always."
+}
