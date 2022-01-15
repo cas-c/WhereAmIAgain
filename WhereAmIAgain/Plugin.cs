@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Dalamud.Plugin;
 using Dalamud.Game;
 using Dalamud.Game.Gui;
@@ -24,8 +25,19 @@ namespace WhereAmIAgain
         internal static ClientState ClientState { get; private set; }
         [PluginService]
         internal static Framework Framework { get; private set; }
-        // public readonly string[] notZones = { "retainer", "equipped", "sale", "guildhest", "regist", "markets", "compass", "current", "sampling", "playing", "orchestrion", ".", "action ", "!", "]" };
-        public readonly string[] notZones = {  ".", "!", "]" };
+        private readonly string[] fadingFootsteps = {
+                "And lo, vile beasts did rise,",
+                "Leaving naught in their wake but blood and ash.",
+                "Thus did the first doom befall us.",
+                "It would not, however, prove the last.",
+                "For soon did the sun bend low, scorching earth and boiling seas.",
+                "Thus did the second doom break us.",
+        };
+        private readonly string[] fadingHearth = {
+                "Yet it was neither claw nor flame, but our very sins",
+                "Stacked to the heavens",
+                "Thus did the third doom undo us."
+        };
         private List<TerritoryType> Territories;
         public string playerZone = "";
         private void UpdateLocation(Framework framework)
@@ -151,8 +163,28 @@ namespace WhereAmIAgain
         private void OnToast(ref SeString message, ref ToastOptions options, ref bool ishandled)
         {
             var text = $"{message}";
-            var isFiltered = Array.FindAll(this.notZones, notZone => text.ToLower().Contains(notZone)).Length > 0;
-            if (!isFiltered)
+            // special handling for amaurot weirdness
+            if (this.territoryName == "Amaurot")
+            {
+                
+                 if (Array.FindAll(this.fadingFootsteps, label => text.Contains(label)).Length > 0)
+                {
+                    this.playerZone = $"\"{text}\" Fading Footsteps";
+                } else
+                {
+                    if (Array.FindAll(this.fadingHearth, label => text.Contains(label)).Length > 0)
+                    {
+                        this.playerZone = $"\"{text}\" Fading Hearth";
+                        return;
+                    } else
+                    {
+                        return;
+                    }
+                }
+            }
+            Regex rx = new Regex(@"[.!\]]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            MatchCollection matches = rx.Matches(text);
+            if (matches.Count == 0)
             {
                 this.playerZone = text;
             }

@@ -1,0 +1,11 @@
+C:\Users\User\AppData\Roaming\XIVLauncher\devPlugins\WhereAmIAgain\whereAmIAgain.json
+C:\Users\User\AppData\Roaming\XIVLauncher\devPlugins\WhereAmIAgain\WhereAmIAgain.deps.json
+C:\Users\User\AppData\Roaming\XIVLauncher\devPlugins\WhereAmIAgain\WhereAmIAgain.dll
+C:\Users\User\AppData\Roaming\XIVLauncher\devPlugins\WhereAmIAgain\WhereAmIAgain.pdb
+F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.GeneratedMSBuildEditorConfig.editorconfig
+F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.AssemblyInfoInputs.cache
+F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.AssemblyInfo.cs
+F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.csproj.CoreCompileInputs.cache
+F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.dll
+F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.pdb
+F:\dev\WhereAmIAgainVS\WhereAmIAgain\obj\x64\Release\WhereAmIAgain.csproj.AssemblyReference.cache
