@@ -68,8 +68,6 @@ namespace WhereAmIAgain
                     territoryRegion = territory.PlaceNameRegion.Value?.Name ?? "The Void"; // LocalizationManager.Localize("DalamudRichPresenceUnknown", LocalizationLanguage.Client);
 
                 }
-                // framework.Gui.Chat.PrintError("Could not start \"Hey, Dalamud!\".\nPlease make sure that you have the American English Windows Language Pack installed.");
-                PluginLog.Log(territoryName, territoryRegion);
                 if (this.territoryName != territoryName || this.territoryRegion != territoryRegion)
                 {
                     this.playerZone = "";
@@ -105,6 +103,7 @@ namespace WhereAmIAgain
         [PluginService]
         public static ToastGui ToastGui { get; private set; } = null!;
         public string LastUpdatedText = "";
+        private Regex rx = new Regex(@"[.!\]:]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 
         public Plugin(
@@ -175,15 +174,11 @@ namespace WhereAmIAgain
                     if (Array.FindAll(this.fadingHearth, label => text.Contains(label)).Length > 0)
                     {
                         this.playerZone = $"\"{text}\" Fading Hearth";
-                        return;
-                    } else
-                    {
-                        return;
                     }
                 }
+                return;
             }
-            Regex rx = new Regex(@"[.!\]]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            MatchCollection matches = rx.Matches(text);
+            MatchCollection matches = this.rx.Matches(text);
             if (matches.Count == 0)
             {
                 this.playerZone = text;
