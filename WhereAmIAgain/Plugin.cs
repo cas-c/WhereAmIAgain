@@ -57,15 +57,15 @@ namespace WhereAmIAgain
                 }
 
                 var territoryId = ClientState.TerritoryType;
-                var territoryName = "testing: name"; // LocalizationManager.Localize("DalamudRichPresenceTheSource", LocalizationLanguage.Client);
-                var territoryRegion = "testing: region"; //LocalizationManager.Localize("DalamudRichPresenceVoid", LocalizationLanguage.Client);
+                var territoryName = "testing: name";
+                var territoryRegion = "testing: region";
 
                 if (territoryId != 0)
                 {
                     // Read territory data from generated sheet
                     var territory = Territories.First(Row => Row.RowId == territoryId);
-                    territoryName = territory.PlaceName.Value?.Name ?? "???"; // LocalizationManager.Localize("DalamudRichPresenceUnknown", LocalizationLanguage.Client);
-                    territoryRegion = territory.PlaceNameRegion.Value?.Name ?? "The Void"; // LocalizationManager.Localize("DalamudRichPresenceUnknown", LocalizationLanguage.Client);
+                    territoryName = territory.PlaceName.Value?.Name ?? "???";
+                    territoryRegion = territory.PlaceNameRegion.Value?.Name ?? "The Void";
 
                 }
                 if (this.territoryName != territoryName || this.territoryRegion != territoryRegion)
@@ -74,13 +74,17 @@ namespace WhereAmIAgain
                 }
                 this.territoryName = territoryName;
                 this.territoryRegion = territoryRegion;
-                var locationString  = $"{territoryName}, {territoryRegion}";
+                var locationString = $"{territoryName}";
+                
+                if (this.Configuration.DisplayTerritoryRegion)
+                {
+                    locationString = $"{locationString}, {territoryRegion}";
+                }
                 if (this.playerZone != "")
                 {
                     locationString = $"{this.playerZone}, {locationString}";
                 }
                 nui.Update(locationString);
-                //Framework.Gui.Chat.Print($"Now entering {territoryName}, {territoryRegion}}.");
             }
             catch (Exception ex)
             {
@@ -145,8 +149,7 @@ namespace WhereAmIAgain
 
         private void OnCommand(string command, string args)
         {
-            // in response to the slash command, just display our main ui
-            this.PluginUi.Visible = true;
+            this.PluginUi.SettingsVisible = true;
         }
 
         private void DrawUI()

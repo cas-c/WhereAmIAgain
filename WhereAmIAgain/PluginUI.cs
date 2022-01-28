@@ -43,43 +43,9 @@ namespace WhereAmIAgain
         {
             this.territoryName = territoryName;
             this.territoryRegion = territoryRegion;
-            // This is our only draw handler attached to UIBuilder, so it needs to be
-            // able to draw any windows we might have open.
-            // Each method checks its own visibility/state to ensure it only draws when
-            // it actually makes sense.
-            // There are other ways to do this, but it is generally best to keep the number of
-            // draw delegates as low as possible.
-
-            DrawMainWindow();
             DrawSettingsWindow();
         }
 
-        public void DrawMainWindow()
-        {
-            if (!Visible)
-            {
-                return;
-            }
-
-            ImGui.SetNextWindowSize(new Vector2(375, 330), ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSizeConstraints(new Vector2(375, 330), new Vector2(float.MaxValue, float.MaxValue));
-            if (ImGui.Begin("Where am I again? Settings", ref this.visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
-            {
-                // ImGui.Text($"The random config bool is {this.configuration.SomePropertyToBeSavedAndWithADefault}");
-
-                if (ImGui.Button("Show Settings"))
-                {
-                    SettingsVisible = true;
-                }
-
-                ImGui.Spacing();
-
-                ImGui.Text($"{this.territoryName}, {this.territoryRegion}");
-                ImGui.Indent(55);
-                ImGui.Unindent(55);
-            }
-            ImGui.End();
-        }
 
         public void DrawSettingsWindow()
         {
@@ -88,18 +54,17 @@ namespace WhereAmIAgain
                 return;
             }
 
-            ImGui.SetNextWindowSize(new Vector2(232, 75), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(400, 75), ImGuiCond.Always);
             if (ImGui.Begin("Where am I again? Settings", ref this.settingsVisible,
                 ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
             {
                 // // can't ref a property, so use a local copy
-                // var configValue = this.configuration.SomePropertyToBeSavedAndWithADefault;
-                // if (ImGui.Checkbox("Random Config Bool", ref configValue))
-                // {
-                //     this.configuration.SomePropertyToBeSavedAndWithADefault = configValue;
-                //     // can save immediately on change, if you don't want to provide a "Save and Close" button
-                //     this.configuration.Save();
-                // }
+                var configValue = this.configuration.DisplayTerritoryRegion;
+                if (ImGui.Checkbox("Display Territory Region (e.g. Gridania)", ref configValue))
+                {
+                     this.configuration.DisplayTerritoryRegion = configValue;
+                     this.configuration.Save();
+                }
             }
             ImGui.End();
         }

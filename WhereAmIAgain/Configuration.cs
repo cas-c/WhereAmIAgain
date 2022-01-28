@@ -9,7 +9,7 @@ namespace WhereAmIAgain
     {
         public int Version { get; set; } = 0;
 
-        public bool SomePropertyToBeSavedAndWithADefault { get; set; } = true;
+        public bool DisplayTerritoryRegion { get; set; } = true;
 
         // the below exist just to make saving less cumbersome
 
