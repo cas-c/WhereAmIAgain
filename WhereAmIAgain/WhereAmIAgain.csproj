@@ -3,8 +3,8 @@
   <PropertyGroup>
     <Authors></Authors>
     <Company></Company>
-    <Version>0.0.0.3</Version>
-    <Description>Show yourself your location.</Description>
+    <Version>0.0.0.5</Version>
+    <Description>Shows what zone/region/territory you are in next to the server info.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/cassandra308/WhereAmIAgain</PackageProjectUrl>
   </PropertyGroup>

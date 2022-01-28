@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using Dalamud.Plugin;
 using Dalamud.Game;
+using Dalamud.Game.Text;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Command;
@@ -107,7 +108,7 @@ namespace WhereAmIAgain
         [PluginService]
         public static ToastGui ToastGui { get; private set; } = null!;
         public string LastUpdatedText = "";
-        private Regex rx = new Regex(@"[.!\]:]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private Regex rx = new Regex($@"[.!\]:{(char) SeIconChar.ArrowRight}]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 
         public Plugin(

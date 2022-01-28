@@ -13,12 +13,12 @@ using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("WhereAmIAgain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
-[assembly: System.Reflection.AssemblyDescriptionAttribute("Show yourself your location.")]
-[assembly: System.Reflection.AssemblyFileVersionAttribute("0.0.0.3")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.0.0.3")]
+[assembly: System.Reflection.AssemblyDescriptionAttribute("Shows what zone/region/territory you are in next to the server info.")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("0.0.0.5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.0.0.5")]
 [assembly: System.Reflection.AssemblyProductAttribute("WhereAmIAgain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WhereAmIAgain")]
-[assembly: System.Reflection.AssemblyVersionAttribute("0.0.0.3")]
+[assembly: System.Reflection.AssemblyVersionAttribute("0.0.0.5")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows7.0")]
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("Windows7.0")]
 

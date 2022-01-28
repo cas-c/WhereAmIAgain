@@ -46,7 +46,6 @@ namespace WhereAmIAgain
             DrawSettingsWindow();
         }
 
-
         public void DrawSettingsWindow()
         {
             if (!SettingsVisible)
