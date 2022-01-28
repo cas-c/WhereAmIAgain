@@ -108,10 +108,11 @@ namespace WhereAmIAgain
         [PluginService]
         public static ToastGui ToastGui { get; private set; } = null!;
         public string LastUpdatedText = "";
-        private Regex rx = new Regex($@"[.!\]:{(char) SeIconChar.ArrowRight}]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static char RightArrow = (char) SeIconChar.ArrowRight;
+        private Regex rx = new Regex($@"[.!\]:{RightArrow}]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 
-        public Plugin(
+        public Plugin (
             [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
             [RequiredVersion("1.0")] GameGui gameGui,
             [RequiredVersion("1.0")] CommandManager commandManager)
