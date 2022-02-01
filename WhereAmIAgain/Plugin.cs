@@ -16,7 +16,7 @@ using Dalamud.Data;
 using System.Collections.Generic;
 using Dalamud.Game.Text.SeStringHandling;
 using System.Linq;
-
+using Dalamud.Game.Gui.Dtr;
 
 namespace WhereAmIAgain
 {
@@ -26,6 +26,10 @@ namespace WhereAmIAgain
         internal static ClientState ClientState { get; private set; }
         [PluginService]
         internal static Framework Framework { get; private set; }
+
+        [PluginService] public static DtrBar DtrBar { get; private set; }
+        private DtrBarEntry dtrEntry;
+
         private readonly string[] fadingFootsteps = {
                 "And lo, vile beasts did rise,",
                 "Leaving naught in their wake but blood and ash.",
@@ -43,7 +47,7 @@ namespace WhereAmIAgain
         public string playerZone = "";
         private void UpdateLocation(Framework framework)
         {
-            nui.Update();
+            UpdateDtrBarEntry();
             try
             {
 
@@ -85,14 +89,15 @@ namespace WhereAmIAgain
                 {
                     locationString = $"{this.playerZone}, {locationString}";
                 }
-                nui.Update(locationString);
+                UpdateDtrBarEntry(locationString);
             }
             catch (Exception ex)
             {
                 PluginLog.LogError(ex, "Could not run OnUpdate.");
             }
         }
-        public string Name => "Where am I again?";
+        public string ConstName => "Where am I again?";
+        public string Name => ConstName;
 
         private const string commandName = "/waia";
 
@@ -104,7 +109,6 @@ namespace WhereAmIAgain
         private PluginUI PluginUi { get; init; }
         public string territoryName;
         public string territoryRegion;
-        private readonly NativeUIUtil nui;
         [PluginService]
         public static ToastGui ToastGui { get; private set; } = null!;
         public string LastUpdatedText = "";
@@ -136,15 +140,19 @@ namespace WhereAmIAgain
 
             Framework.Update += UpdateLocation;
             Territories = DataManager.GetExcelSheet<TerritoryType>().ToList();
-            nui = new NativeUIUtil(Configuration, gameGui);
-            nui.Init();
+            dtrEntry = DtrBar.Get(ConstName);
             ToastGui.Toast += this.OnToast;
+        }
+
+        private void UpdateDtrBarEntry(string text = null)
+        {
+            dtrEntry.Text = text;
         }
 
         public void Dispose()
         {
             this.PluginUi.Dispose();
-            nui.Dispose();
+            dtrEntry?.Dispose();
             this.CommandManager.RemoveHandler(commandName);
             ToastGui.Toast -= this.OnToast;
         }
