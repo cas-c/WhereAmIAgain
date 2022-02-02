@@ -10,8 +10,9 @@ namespace WhereAmIAgain
         public int Version { get; set; } = 0;
 
         public bool DisplayTerritoryRegion { get; set; } = true;
+        public bool DisplayTerritoryName { get; set; } = true;
+        public bool DisplayPlaceName { get; set; } = true;
 
-        // the below exist just to make saving less cumbersome
 
         [NonSerialized]
         private DalamudPluginInterface? pluginInterface;

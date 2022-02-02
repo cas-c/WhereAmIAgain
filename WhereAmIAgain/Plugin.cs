@@ -79,16 +79,37 @@ namespace WhereAmIAgain
                 }
                 this.territoryName = territoryName;
                 this.territoryRegion = territoryRegion;
-                var locationString = $"{territoryName}";
-                
+                var locationString = "";
+
+                if (this.Configuration.DisplayPlaceName)
+                {
+                    locationString = this.playerZone;
+                    
+                };
+
+                if (this.Configuration.DisplayTerritoryName)
+                {
+                    if (this.Configuration.DisplayPlaceName && locationString != "")
+                    {
+                        locationString = $"{locationString}, {this.territoryName}";
+                    } else
+                    {
+                        locationString = this.territoryName;
+                    }
+                    
+                }
+
                 if (this.Configuration.DisplayTerritoryRegion)
                 {
-                    locationString = $"{locationString}, {territoryRegion}";
+                    if (this.Configuration.DisplayTerritoryName || this.Configuration.DisplayPlaceName)
+                    {
+                        locationString = $"{locationString}, {this.territoryRegion}";
+                    } else
+                    {
+                        locationString = this.territoryRegion;
+                    }
                 }
-                if (this.playerZone != "")
-                {
-                    locationString = $"{this.playerZone}, {locationString}";
-                }
+
                 UpdateDtrBarEntry(locationString);
             }
             catch (Exception ex)

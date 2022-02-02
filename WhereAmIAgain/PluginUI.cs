@@ -53,16 +53,30 @@ namespace WhereAmIAgain
                 return;
             }
 
-            ImGui.SetNextWindowSize(new Vector2(400, 75), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(400, 150), ImGuiCond.Always);
             if (ImGui.Begin("Where am I again? Settings", ref this.settingsVisible,
                 ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
             {
-                // // can't ref a property, so use a local copy
-                var configValue = this.configuration.DisplayTerritoryRegion;
-                if (ImGui.Checkbox("Display Territory Region (e.g. Gridania)", ref configValue))
+
+                var DisplayTerritoryRegion = this.configuration.DisplayTerritoryRegion;
+                if (ImGui.Checkbox("Display Territory Region (e.g. The Northern Empty)", ref DisplayTerritoryRegion))
                 {
-                     this.configuration.DisplayTerritoryRegion = configValue;
+                     this.configuration.DisplayTerritoryRegion = DisplayTerritoryRegion;
                      this.configuration.Save();
+                }
+
+                var DisplayTerritoryName = this.configuration.DisplayTerritoryName;
+                if (ImGui.Checkbox("Display Territory Name (e.g. Old Sharlayan)", ref DisplayTerritoryName))
+                {
+                    this.configuration.DisplayTerritoryName = DisplayTerritoryName;
+                    this.configuration.Save();
+                }
+
+                var DisplayPlaceName = this.configuration.DisplayPlaceName;
+                if (ImGui.Checkbox("Display Place Name (e.g. Old Sharlayan Aetheryte Plaza)", ref DisplayPlaceName))
+                {
+                    this.configuration.DisplayPlaceName = DisplayPlaceName;
+                    this.configuration.Save();
                 }
             }
             ImGui.End();
