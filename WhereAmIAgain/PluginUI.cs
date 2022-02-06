@@ -53,7 +53,7 @@ namespace WhereAmIAgain
                 return;
             }
 
-            ImGui.SetNextWindowSize(new Vector2(400, 400), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(550, 400), ImGuiCond.Always);
             if (ImGui.Begin("Where am I again? Settings", ref this.settingsVisible,
                 ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
             {
@@ -149,6 +149,18 @@ namespace WhereAmIAgain
                         this.configuration.Save();
                     }
                 }
+
+                ImGui.Text(" ");
+                ImGui.Text("~ additional settings ~");
+
+                var RemoveDuplicates = this.configuration.RemoveDuplicates;
+                if (ImGui.Checkbox("Try to filter out duplicates in zone names", ref RemoveDuplicates))
+                {
+                    this.configuration.RemoveDuplicates = RemoveDuplicates;
+                    this.configuration.Save();
+                }
+
+                ImGui.Text("Removes repeated zone names (Housing districts, Aetheryte plazas)");
 
             }
             ImGui.End();

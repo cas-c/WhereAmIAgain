@@ -107,22 +107,29 @@ namespace WhereAmIAgain
                     tailingText = this.Configuration.DisplayZoneTailingText;
                 }
 
-                if (this.Configuration.DisplayPlaceName)
-                {
-                    locationString = this.playerZone;
-
-                };
 
                 if (this.Configuration.DisplayTerritoryName)
                 {
-                    if (this.Configuration.DisplayPlaceName && locationString != "")
+                    var hideDueToDuplicates = false;
+                    if (this.Configuration.RemoveDuplicates)
                     {
-                        locationString = $"{locationString}{separator} {this.territoryName}";
-                    } else
-                    {
-                        locationString = this.territoryName;
+
+                        var rx = new Regex(this.territoryName, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        var duplicateTerritoryName = rx.Matches(this.playerZone);
+                        hideDueToDuplicates = duplicateTerritoryName.Count != 0;
                     }
-                    
+                    if (!hideDueToDuplicates)
+                    {
+
+                        if (this.Configuration.DisplayPlaceName && locationString != "")
+                        {
+                            locationString = $"{locationString}{separator} {this.territoryName}";
+                        }
+                        else
+                        {
+                            locationString = this.territoryName;
+                        }
+                    }
                 }
 
                 if (this.Configuration.DisplayTerritoryRegion)

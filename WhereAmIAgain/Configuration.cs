@@ -20,6 +20,7 @@ namespace WhereAmIAgain
         public string DisplayZoneLeadingText { get; set; } = "";
         public bool DisplayZoneTailing { get; set; } = false;
         public string DisplayZoneTailingText { get; set; } = "";
+        public bool RemoveDuplicates { get; set; } = true;
 
         [NonSerialized]
         private DalamudPluginInterface? pluginInterface;
