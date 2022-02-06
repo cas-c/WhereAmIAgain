@@ -45,7 +45,6 @@ namespace WhereAmIAgain
             this.territoryRegion = territoryRegion;
             DrawSettingsWindow();
         }
-        private string _temporaryNewZoneSeparator = "";
 
         public void DrawSettingsWindow()
         {
@@ -54,23 +53,26 @@ namespace WhereAmIAgain
                 return;
             }
 
-            ImGui.SetNextWindowSize(new Vector2(400, 300), ImGuiCond.Always);
+            ImGui.SetNextWindowSize(new Vector2(400, 400), ImGuiCond.Always);
             if (ImGui.Begin("Where am I again? Settings", ref this.settingsVisible,
                 ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
             {
-
-                var DisplayTerritoryRegion = this.configuration.DisplayTerritoryRegion;
-                if (ImGui.Checkbox("Display Territory Region (e.g. The Northern Empty)", ref DisplayTerritoryRegion))
+                var DisplayZoneLead = this.configuration.DisplayZoneLead;
+                if (ImGui.Checkbox("Add text before place name", ref DisplayZoneLead))
                 {
-                     this.configuration.DisplayTerritoryRegion = DisplayTerritoryRegion;
-                     this.configuration.Save();
+                    this.configuration.DisplayZoneLead = DisplayZoneLead;
+                    this.configuration.Save();
                 }
 
-                var DisplayTerritoryName = this.configuration.DisplayTerritoryName;
-                if (ImGui.Checkbox("Display Territory Name (e.g. Old Sharlayan)", ref DisplayTerritoryName))
+                if (DisplayZoneLead)
                 {
-                    this.configuration.DisplayTerritoryName = DisplayTerritoryName;
-                    this.configuration.Save();
+                    var DisplayZoneLeadingText = this.configuration.DisplayZoneLeadingText;
+                    ImGui.InputText("##DisplayZoneLeadingText", ref DisplayZoneLeadingText, 50);
+                    if (this.configuration.DisplayZoneLeadingText != DisplayZoneLeadingText)
+                    {
+                        this.configuration.DisplayZoneLeadingText = DisplayZoneLeadingText;
+                        this.configuration.Save();
+                    }
                 }
 
                 var DisplayPlaceName = this.configuration.DisplayPlaceName;
@@ -79,7 +81,6 @@ namespace WhereAmIAgain
                     this.configuration.DisplayPlaceName = DisplayPlaceName;
                     this.configuration.Save();
                 }
-
 
                 var DisplayZoneSeparator = this.configuration.DisplayZoneSeparator;
                 if (ImGui.Checkbox("Display a separator between Place and Territory ", ref DisplayZoneSeparator))
@@ -91,12 +92,19 @@ namespace WhereAmIAgain
                 if (DisplayZoneSeparator)
                 {
                     var ZoneSeparator = this.configuration.ZoneSeparator;
-                    ImGui.InputText("##ZoneSeparator", ref ZoneSeparator, 12);
+                    ImGui.InputText("##ZoneSeparator", ref ZoneSeparator, 50);
                     if (this.configuration.ZoneSeparator != ZoneSeparator)
                     {
                         this.configuration.ZoneSeparator = ZoneSeparator;
                         this.configuration.Save();
                     }
+                }
+
+                var DisplayTerritoryName = this.configuration.DisplayTerritoryName;
+                if (ImGui.Checkbox("Display Territory Name (e.g. Old Sharlayan)", ref DisplayTerritoryName))
+                {
+                    this.configuration.DisplayTerritoryName = DisplayTerritoryName;
+                    this.configuration.Save();
                 }
 
                 var DisplayZoneSeparator2 = this.configuration.DisplayZoneSeparator2;
@@ -109,13 +117,39 @@ namespace WhereAmIAgain
                 if (DisplayZoneSeparator2)
                 {
                     var ZoneSeparator2 = this.configuration.ZoneSeparator2;
-                    ImGui.InputText("##ZoneSeparator2", ref ZoneSeparator2, 12);
+                    ImGui.InputText("##ZoneSeparator2", ref ZoneSeparator2, 50);
                     if (this.configuration.ZoneSeparator2 != ZoneSeparator2)
                     {
                         this.configuration.ZoneSeparator2 = ZoneSeparator2;
                         this.configuration.Save();
                     }
                 }
+
+                var DisplayTerritoryRegion = this.configuration.DisplayTerritoryRegion;
+                if (ImGui.Checkbox("Display Territory Region (e.g. The Northern Empty)", ref DisplayTerritoryRegion))
+                {
+                    this.configuration.DisplayTerritoryRegion = DisplayTerritoryRegion;
+                    this.configuration.Save();
+                }
+
+                var DisplayZoneTailing = this.configuration.DisplayZoneTailing;
+                if (ImGui.Checkbox("Add text after region name ", ref DisplayZoneTailing))
+                {
+                    this.configuration.DisplayZoneTailing = DisplayZoneTailing;
+                    this.configuration.Save();
+                }
+
+                if (DisplayZoneTailing)
+                {
+                    var DisplayZoneTailingText = this.configuration.DisplayZoneTailingText;
+                    ImGui.InputText("##DisplayZoneTailingText", ref DisplayZoneTailingText, 50);
+                    if (this.configuration.DisplayZoneTailingText != DisplayZoneTailingText)
+                    {
+                        this.configuration.DisplayZoneTailingText = DisplayZoneTailingText;
+                        this.configuration.Save();
+                    }
+                }
+
             }
             ImGui.End();
         }

@@ -16,6 +16,10 @@ namespace WhereAmIAgain
         public string ZoneSeparator { get; set; } = ",";
         public bool DisplayZoneSeparator2 { get; set; } = true;
         public string ZoneSeparator2 { get; set; } = ",";
+        public bool DisplayZoneLead { get; set; } = false;
+        public string DisplayZoneLeadingText { get; set; } = "";
+        public bool DisplayZoneTailing { get; set; } = false;
+        public string DisplayZoneTailingText { get; set; } = "";
 
         [NonSerialized]
         private DalamudPluginInterface? pluginInterface;

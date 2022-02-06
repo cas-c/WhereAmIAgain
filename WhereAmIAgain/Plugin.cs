@@ -96,6 +96,22 @@ namespace WhereAmIAgain
                     locationString = this.playerZone;
                     
                 };
+                var leadingText = "";
+                if (this.Configuration.DisplayZoneLead)
+                {
+                    leadingText = this.Configuration.DisplayZoneLeadingText;
+                }
+                var tailingText = "";
+                if (this.Configuration.DisplayZoneTailing)
+                {
+                    tailingText = this.Configuration.DisplayZoneTailingText;
+                }
+
+                if (this.Configuration.DisplayPlaceName)
+                {
+                    locationString = this.playerZone;
+
+                };
 
                 if (this.Configuration.DisplayTerritoryName)
                 {
@@ -120,7 +136,7 @@ namespace WhereAmIAgain
                     }
                 }
 
-                UpdateDtrBarEntry(locationString);
+                UpdateDtrBarEntry($"{leadingText}{locationString}{tailingText}");
             }
             catch (Exception ex)
             {
