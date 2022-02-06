@@ -12,7 +12,10 @@ namespace WhereAmIAgain
         public bool DisplayTerritoryRegion { get; set; } = true;
         public bool DisplayTerritoryName { get; set; } = true;
         public bool DisplayPlaceName { get; set; } = true;
-
+        public bool DisplayZoneSeparator { get; set; } = true;
+        public string ZoneSeparator { get; set; } = ",";
+        public bool DisplayZoneSeparator2 { get; set; } = true;
+        public string ZoneSeparator2 { get; set; } = ",";
 
         [NonSerialized]
         private DalamudPluginInterface? pluginInterface;

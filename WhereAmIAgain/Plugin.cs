@@ -80,6 +80,16 @@ namespace WhereAmIAgain
                 this.territoryName = territoryName;
                 this.territoryRegion = territoryRegion;
                 var locationString = "";
+                var separator = "";
+                if (this.Configuration.DisplayZoneSeparator)
+                {
+                    separator = this.Configuration.ZoneSeparator;
+                }
+                var separator2 = "";
+                if (this.Configuration.DisplayZoneSeparator2)
+                {
+                    separator2 = this.Configuration.ZoneSeparator2;
+                }
 
                 if (this.Configuration.DisplayPlaceName)
                 {
@@ -91,7 +101,7 @@ namespace WhereAmIAgain
                 {
                     if (this.Configuration.DisplayPlaceName && locationString != "")
                     {
-                        locationString = $"{locationString}, {this.territoryName}";
+                        locationString = $"{locationString}{separator} {this.territoryName}";
                     } else
                     {
                         locationString = this.territoryName;
@@ -103,7 +113,7 @@ namespace WhereAmIAgain
                 {
                     if (this.Configuration.DisplayTerritoryName || this.Configuration.DisplayPlaceName)
                     {
-                        locationString = $"{locationString}, {this.territoryRegion}";
+                        locationString = $"{locationString}{separator2} {this.territoryRegion}";
                     } else
                     {
                         locationString = this.territoryRegion;
