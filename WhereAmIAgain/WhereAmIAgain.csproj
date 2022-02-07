@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors></Authors>
     <Company></Company>
-	<AssemblyVersion>0.0.0.7</AssemblyVersion>
+	<AssemblyVersion>0.0.0.8</AssemblyVersion>
     <Description>Shows what zone/region/territory you are in next to the server info.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/cassandra308/WhereAmIAgain</PackageProjectUrl>
