@@ -53,9 +53,8 @@ namespace WhereAmIAgain
                 return;
             }
 
-            ImGui.SetNextWindowSize(new Vector2(550, 400), ImGuiCond.Always);
-            if (ImGui.Begin("Where am I again? Settings", ref this.settingsVisible,
-                ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
+            ImGui.SetNextWindowSize(new Vector2(600, 400), ImGuiCond.FirstUseEver);
+            if (ImGui.Begin("Where am I again? Settings", ref this.settingsVisible))
             {
                 var DisplayZoneLead = this.configuration.DisplayZoneLead;
                 if (ImGui.Checkbox("Add text before place name", ref DisplayZoneLead))
@@ -76,7 +75,7 @@ namespace WhereAmIAgain
                 }
 
                 var DisplayPlaceName = this.configuration.DisplayPlaceName;
-                if (ImGui.Checkbox("Display Place Name (e.g. Old Sharlayan Aetheryte Plaza)", ref DisplayPlaceName))
+                if (ImGui.Checkbox("Display Place Name (e.g. The Octant)", ref DisplayPlaceName))
                 {
                     this.configuration.DisplayPlaceName = DisplayPlaceName;
                     this.configuration.Save();
@@ -101,7 +100,7 @@ namespace WhereAmIAgain
                 }
 
                 var DisplayTerritoryName = this.configuration.DisplayTerritoryName;
-                if (ImGui.Checkbox("Display Territory Name (e.g. Old Sharlayan)", ref DisplayTerritoryName))
+                if (ImGui.Checkbox("Display Territory Name (e.g. Limsa Lominsa Lower Decks)", ref DisplayTerritoryName))
                 {
                     this.configuration.DisplayTerritoryName = DisplayTerritoryName;
                     this.configuration.Save();
@@ -126,7 +125,7 @@ namespace WhereAmIAgain
                 }
 
                 var DisplayTerritoryRegion = this.configuration.DisplayTerritoryRegion;
-                if (ImGui.Checkbox("Display Territory Region (e.g. The Northern Empty)", ref DisplayTerritoryRegion))
+                if (ImGui.Checkbox("Display Territory Region (e.g. La Noscea)", ref DisplayTerritoryRegion))
                 {
                     this.configuration.DisplayTerritoryRegion = DisplayTerritoryRegion;
                     this.configuration.Save();
@@ -160,7 +159,7 @@ namespace WhereAmIAgain
                     this.configuration.Save();
                 }
 
-                ImGui.Text("Removes repeated zone names (Housing districts, Aetheryte plazas)");
+                ImGui.Text("Removes repeated zone names (such as in Housing districts, Aetheryte plazas)");
 
             }
             ImGui.End();
