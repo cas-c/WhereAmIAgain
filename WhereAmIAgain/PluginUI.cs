@@ -12,6 +12,7 @@ namespace WhereAmIAgain
 
         public string territoryName;
         public string territoryRegion;
+        public string playerZone;
         // this extra bool exists for ImGui, since you can't ref a property
         private bool visible = false;
         public bool Visible
@@ -39,10 +40,11 @@ namespace WhereAmIAgain
         {
         }
 
-        public void Draw(string territoryName, string territoryRegion)
+        public void Draw(string territoryName, string territoryRegion, string playerZone)
         {
             this.territoryName = territoryName;
             this.territoryRegion = territoryRegion;
+            this.playerZone = playerZone;
             DrawSettingsWindow();
         }
 
@@ -75,7 +77,13 @@ namespace WhereAmIAgain
                 }
 
                 var DisplayPlaceName = this.configuration.DisplayPlaceName;
-                if (ImGui.Checkbox("Display Place Name (e.g. The Octant)", ref DisplayPlaceName))
+                var stringPlaceName = "The Octant";
+                if (this.playerZone != "")
+                {
+                    stringPlaceName = this.playerZone;
+                }
+
+                if (ImGui.Checkbox($"Display Place Name (e.g. {stringPlaceName})", ref DisplayPlaceName))
                 {
                     this.configuration.DisplayPlaceName = DisplayPlaceName;
                     this.configuration.Save();
@@ -100,7 +108,7 @@ namespace WhereAmIAgain
                 }
 
                 var DisplayTerritoryName = this.configuration.DisplayTerritoryName;
-                if (ImGui.Checkbox("Display Territory Name (e.g. Limsa Lominsa Lower Decks)", ref DisplayTerritoryName))
+                if (ImGui.Checkbox($"Display Territory Name (e.g. {this.territoryName ?? "Limsa Lominsa Lower Decks"})", ref DisplayTerritoryName))
                 {
                     this.configuration.DisplayTerritoryName = DisplayTerritoryName;
                     this.configuration.Save();
@@ -125,7 +133,7 @@ namespace WhereAmIAgain
                 }
 
                 var DisplayTerritoryRegion = this.configuration.DisplayTerritoryRegion;
-                if (ImGui.Checkbox("Display Territory Region (e.g. La Noscea)", ref DisplayTerritoryRegion))
+                if (ImGui.Checkbox($"Display Territory Region (e.g. {this.territoryRegion ?? "La Noscea"})", ref DisplayTerritoryRegion))
                 {
                     this.configuration.DisplayTerritoryRegion = DisplayTerritoryRegion;
                     this.configuration.Save();

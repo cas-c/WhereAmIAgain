@@ -218,7 +218,7 @@ namespace WhereAmIAgain
 
         private void DrawUI()
         {
-            this.PluginUi.Draw(this.territoryName, this.territoryRegion);
+            this.PluginUi.Draw(this.territoryName, this.territoryRegion, this.playerZone);
         }
 
         private void DrawConfigUI()
