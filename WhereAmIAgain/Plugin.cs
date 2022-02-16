@@ -22,13 +22,64 @@ namespace WhereAmIAgain
 {
     public sealed class Plugin : IDalamudPlugin, IDisposable
     {
-        [PluginService]
-        internal static ClientState ClientState { get; private set; }
-        [PluginService]
-        internal static Framework Framework { get; private set; }
+        //private string ConstName => "Where am I again?";
+        public string Name => "Where am I again?";
+        private const string commandName = "/waia";
 
+        [PluginService] internal static ClientState ClientState { get; private set; }
+        [PluginService] internal static DataManager DataManager { get; private set; }
         [PluginService] public static DtrBar DtrBar { get; private set; }
+        [PluginService] internal static Framework Framework { get; private set; }
+        [PluginService] public static ToastGui ToastGui { get; private set; } = null!;
+
+        private DalamudPluginInterface PluginInterface { get; init; }
+        private CommandManager CommandManager { get; init; }
+        public Configuration Configuration { get; init; }
+        private PluginUI PluginUi { get; init; }
+
         private DtrBarEntry dtrEntry;
+        private List<TerritoryType> Territories;
+        private static char RightArrow = (char)SeIconChar.ArrowRight;
+        private Regex rx = new Regex($@"[.!\]:{RightArrow}]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+        public string playerZone = "";
+        public string territoryName = "";
+        public string territoryRegion = "";
+        public string LastUpdatedText = "";     
+
+        public Plugin (
+            [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
+            [RequiredVersion("1.0")] CommandManager commandManager)
+        {
+            this.PluginInterface = pluginInterface;
+            this.CommandManager = commandManager;
+            this.Configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            this.Configuration.Initialize(this.PluginInterface);
+            this.PluginUi = new PluginUI(this);
+
+            this.CommandManager.AddHandler(commandName, new CommandInfo(this.OnCommand)
+            {
+                HelpMessage = "Displays the local in-game zone next to your server info."
+            });
+
+            this.PluginInterface.UiBuilder.Draw += DrawUI;
+            this.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+            this.Territories = DataManager.GetExcelSheet<TerritoryType>().ToList();
+            this.dtrEntry = DtrBar.Get(this.Name);
+            Framework.Update += UpdateLocation;
+            ToastGui.Toast += this.OnToast;
+        }
+
+        public void Dispose()
+        {
+            this.PluginInterface.UiBuilder.Draw -= DrawUI;
+            this.PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
+            this.PluginUi.Dispose();
+            this.CommandManager.RemoveHandler(commandName);
+            ToastGui.Toast -= this.OnToast;
+            Framework.Update -= this.UpdateLocation;
+        }
+
 
         private readonly string[] fadingFootsteps = {
                 "And lo, vile beasts did rise,",
@@ -43,11 +94,8 @@ namespace WhereAmIAgain
                 "Stacked to the heavens",
                 "Thus did the third doom undo us."
         };
-        private List<TerritoryType> Territories;
-        public string playerZone = "";
         private void UpdateLocation(Framework framework)
         {
-            UpdateDtrBarEntry();
             try
             {
 
@@ -150,65 +198,10 @@ namespace WhereAmIAgain
                 PluginLog.LogError(ex, "Could not run OnUpdate.");
             }
         }
-        public string ConstName => "Where am I again?";
-        public string Name => ConstName;
 
-        private const string commandName = "/waia";
-
-        private DalamudPluginInterface PluginInterface { get; init; }
-        private CommandManager CommandManager { get; init; }
-        [PluginService]
-        internal static DataManager DataManager { get; private set; }
-        private Configuration Configuration { get; init; }
-        private PluginUI PluginUi { get; init; }
-        public string territoryName;
-        public string territoryRegion;
-        [PluginService]
-        public static ToastGui ToastGui { get; private set; } = null!;
-        public string LastUpdatedText = "";
-        private static char RightArrow = (char) SeIconChar.ArrowRight;
-        private Regex rx = new Regex($@"[.!\]:{RightArrow}]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-
-        public Plugin (
-            [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
-            [RequiredVersion("1.0")] GameGui gameGui,
-            [RequiredVersion("1.0")] CommandManager commandManager)
-        {
-            this.PluginInterface = pluginInterface;
-            this.CommandManager = commandManager;
-
-            this.Configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            this.Configuration.Initialize(this.PluginInterface);
-
-            this.PluginUi = new PluginUI(this.Configuration);
-
-            this.CommandManager.AddHandler(commandName, new CommandInfo(OnCommand)
-            {
-                HelpMessage = "Displays the local in-game zone next to your server info."
-            });
-
-            this.PluginInterface.UiBuilder.Draw += DrawUI;
-            this.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
-
-
-            Framework.Update += UpdateLocation;
-            Territories = DataManager.GetExcelSheet<TerritoryType>().ToList();
-            dtrEntry = DtrBar.Get(ConstName);
-            ToastGui.Toast += this.OnToast;
-        }
-
-        private void UpdateDtrBarEntry(string text = null)
+        private void UpdateDtrBarEntry(string text = "")
         {
             dtrEntry.Text = text;
-        }
-
-        public void Dispose()
-        {
-            this.PluginUi.Dispose();
-            dtrEntry?.Dispose();
-            this.CommandManager.RemoveHandler(commandName);
-            ToastGui.Toast -= this.OnToast;
         }
 
         private void OnCommand(string command, string args)
@@ -218,7 +211,7 @@ namespace WhereAmIAgain
 
         private void DrawUI()
         {
-            this.PluginUi.Draw(this.territoryName, this.territoryRegion, this.playerZone);
+            this.PluginUi.Draw();
         }
 
         private void DrawConfigUI()
