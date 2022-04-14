@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors></Authors>
     <Company></Company>
-	<AssemblyVersion>0.0.0.8</AssemblyVersion>
+	<AssemblyVersion>0.0.0.9</AssemblyVersion>
     <Description>Shows what zone/region/territory you are in next to the server info.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/cassandra308/WhereAmIAgain</PackageProjectUrl>
@@ -31,7 +31,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DalamudPackager" Version="2.1.5" />
+    <PackageReference Include="DalamudPackager" Version="2.1.6" />
     <Reference Include="FFXIVClientStructs">
       <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
       <Private>false</Private>
