@@ -72,6 +72,7 @@ namespace WhereAmIAgain
 
         public void Dispose()
         {
+            this.dtrEntry?.Dispose();
             this.PluginInterface.UiBuilder.Draw -= DrawUI;
             this.PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
             this.PluginUi.Dispose();
