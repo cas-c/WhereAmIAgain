@@ -41,7 +41,7 @@ public class ConfigurationWindow : Window, IDisposable
                    "{0} - Region (Ex. The Northern Empty)\n" +
                    "{1} - Territory (Ex. Old Sharlayan)\n" +
                    "{2} - Area (Ex. Archon's Design)\n" +
-                   "{3} - Sub-Area (Ex. Old Sharlayan Aetheryte Plaza");
+                   "{3} - Sub-Area (Ex. Old Sharlayan Aetheryte Plaza)");
         
         ImGuiHelpers.ScaledDummy(10.0f);
 
