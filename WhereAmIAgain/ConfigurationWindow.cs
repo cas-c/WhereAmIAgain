@@ -53,6 +53,13 @@ public class ConfigurationWindow : Window, IDisposable
                 Service.Configuration.Save();
             }
         }
+        
+        ImGui.SameLine();
+        if (ImGui.Button("Reset To Default"))
+        {
+            Configuration.FormatString = "{0}, {1}, {2}, {3}";
+            Service.Configuration.Save();
+        }
 
         if (BracesMismatched())
         {
