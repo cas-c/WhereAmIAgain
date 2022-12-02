@@ -97,6 +97,7 @@ public unsafe class DtrDisplay : IDisposable
             }
             
             dtrEntry.Text = new SeStringBuilder().AddText(filteredString).BuiltString;
+            locationChanged = false;
         }
         catch(FormatException)
         {
