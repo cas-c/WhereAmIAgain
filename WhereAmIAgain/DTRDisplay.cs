@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Dalamud.Game;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Logging;
 using Dalamud.Utility;
 using Dalamud.Utility.Signatures;
 using Lumina.Excel.GeneratedSheets;
@@ -41,6 +42,9 @@ public unsafe class DtrDisplay : IDisposable
     
     [Signature("8B 2D ?? ?? ?? ?? 41 BF", ScanType = ScanType.StaticAddress)]
     private readonly TerritoryInfoStruct* territoryInfo = null!;
+
+    [Signature("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 80 BD", ScanType = ScanType.StaticAddress)]
+    private readonly int* instanceNumber = null!;
 
     public DtrDisplay()
     {
@@ -85,6 +89,11 @@ public unsafe class DtrDisplay : IDisposable
                 currentSubArea?.Name.RawString ?? string.Empty);
 
             var filteredString = Regex.Replace(formattedString, "^[^\\p{L}\\p{N}]*|[^\\p{L}\\p{N}]*$", "");
+
+            if (Config.ShowInstanceNumber)
+            {
+                filteredString += GetCharacterForInstanceNumber(GetInstanceNumber());
+            }
             
             dtrEntry.Text = new SeStringBuilder().AddText(filteredString).BuiltString;
         }
@@ -92,6 +101,22 @@ public unsafe class DtrDisplay : IDisposable
         {
             // Ignore format exceptions, because we warn the user in the config window if they are missing a format symbol 
         }
+    }
+
+    private int GetInstanceNumber()
+    {
+        return *(int*) ((byte*) instanceNumber + 32);
+    }
+
+    private string GetCharacterForInstanceNumber(int instance)
+    {
+        return instance switch
+        {
+            1 => "  ",
+            2 => "  ",
+            3 => "  ",
+            _ => string.Empty
+        };
     }
 
     private void UpdateTerritory()

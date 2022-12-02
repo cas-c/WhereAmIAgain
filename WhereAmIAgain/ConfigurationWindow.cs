@@ -3,6 +3,7 @@ using System.Linq;
 using System.Numerics;
 using Dalamud.Game.Command;
 using Dalamud.Interface;
+using Dalamud.Interface.Components;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
@@ -65,6 +66,14 @@ public class ConfigurationWindow : Window, IDisposable
         {
             ImGui.TextColored(new Vector4(1.0f, 0.2f, 0.2f, 1.0f), "There is an error in the format string.\nPlease check there is a open brace { and a matching close brace }");
         }
+        
+        ImGuiHelpers.ScaledDummy(10.0f);
+
+        if (ImGui.Checkbox("Show Instance Number", ref Configuration.ShowInstanceNumber))
+        {
+            Service.Configuration.Save();
+        }
+        ImGuiComponents.HelpMarker("Shows the instance number for the current instance at the end of the string");
     }
 
     private bool BracesMismatched()
