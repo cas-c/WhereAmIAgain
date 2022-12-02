@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Dalamud.Game;
 using Dalamud.Game.Gui.Dtr;
+using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Logging;
 using Dalamud.Utility;
@@ -103,20 +104,13 @@ public unsafe class DtrDisplay : IDisposable
         }
     }
 
-    private int GetInstanceNumber()
-    {
-        return *(int*) ((byte*) instanceNumber + 32);
-    }
+    private int GetInstanceNumber() => *(int*) ((byte*) instanceNumber + 32);
 
     private string GetCharacterForInstanceNumber(int instance)
     {
-        return instance switch
-        {
-            1 => "  ",
-            2 => "  ",
-            3 => "  ",
-            _ => string.Empty
-        };
+        if (instance == 0) return string.Empty;
+        
+        return $" {((SeIconChar)((int)SeIconChar.Instance1 + (instance - 1))).ToIconChar()}";
     }
 
     private void UpdateTerritory()
