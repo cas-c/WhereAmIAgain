@@ -89,7 +89,7 @@ public unsafe class DtrDisplay : IDisposable
                 currentRegion?.Name.RawString ?? string.Empty,
                 currentSubArea?.Name.RawString ?? string.Empty);
 
-            var filteredString = Regex.Replace(formattedString, "^[^\\p{L}]*|[^\\p{L}]*$", "");
+            var filteredString = Regex.Replace(formattedString, "^[^\\p{L}\\p{N}]*|[^\\p{L}\\p{N}]*$", "");
 
             if (Config.ShowInstanceNumber)
             {
