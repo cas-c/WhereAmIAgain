@@ -46,7 +46,11 @@ public class ConfigurationWindow : Window, IDisposable
         
         ImGuiHelpers.ScaledDummy(10.0f);
 
-        ImGui.InputText("##InputString", ref Configuration.FormatString, 35);
+        if (ImGui.InputText("##InputString", ref Configuration.FormatString, 35))
+        {
+            Service.DtrDisplay.UpdateDtrText();
+        }
+        
         if (ImGui.IsItemDeactivatedAfterEdit())
         {
             if (!BracesMismatched())
@@ -59,6 +63,7 @@ public class ConfigurationWindow : Window, IDisposable
         if (ImGui.Button("Reset To Default"))
         {
             Configuration.FormatString = "{0}, {1}, {2}, {3}";
+            Service.DtrDisplay.UpdateDtrText();
             Service.Configuration.Save();
         }
 
