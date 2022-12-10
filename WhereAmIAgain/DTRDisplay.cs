@@ -79,7 +79,7 @@ public unsafe class DtrDisplay : IDisposable
         }
     }
 
-    private void UpdateDtrText()
+    public void UpdateDtrText()
     {
         try
         {
