@@ -81,28 +81,41 @@ public unsafe class DtrDisplay : IDisposable
 
     public void UpdateDtrText()
     {
-        try
+        var preTextEnd = Config.FormatString.IndexOf("{");
+        var postTextStart = Config.FormatString.LastIndexOf("}") + 1;
+        var formattedString = Config.FormatString;
+        
+        if(preTextEnd > -1 && postTextStart > 0)
         {
-            var formattedString = Config.FormatString.Format(
-                currentContinent?.Name.RawString ?? string.Empty,
-                currentTerritory?.Name.RawString ?? string.Empty,
-                currentRegion?.Name.RawString ?? string.Empty,
-                currentSubArea?.Name.RawString ?? string.Empty);
-
-            var filteredString = Regex.Replace(formattedString, "^[^\\p{L}\\p{N}]*|[^\\p{L}\\p{N}]*$", "");
-
-            if (Config.ShowInstanceNumber)
+            try
             {
-                filteredString += GetCharacterForInstanceNumber(GetInstanceNumber());
+                var preText = Config.FormatString.Substring(0, preTextEnd);
+                var postText = Config.FormatString.Substring(postTextStart);
+                formattedString = formattedString.Substring(preTextEnd, postTextStart);
+
+                formattedString = formattedString.Format(
+                    currentContinent?.Name.RawString ?? string.Empty,
+                    currentTerritory?.Name.RawString ?? string.Empty,
+                    currentRegion?.Name.RawString ?? string.Empty,
+                    currentSubArea?.Name.RawString ?? string.Empty);
+
+                // Remove separators from between blank values
+                formattedString = Regex.Replace(formattedString, "^[^\\p{L}\\p{N}]*|[^\\p{L}\\p{N}]*$", "");
+
+                if (Config.ShowInstanceNumber)
+                {
+                    formattedString += GetCharacterForInstanceNumber(GetInstanceNumber());
+                }
+
+                formattedString = preText + formattedString + postText;
             }
-            
-            dtrEntry.Text = new SeStringBuilder().AddText(filteredString).BuiltString;
-            locationChanged = false;
+            catch(FormatException)
+            {
+                // Ignore format exceptions, because we warn the user in the config window if they are missing a format symbol 
+            }
         }
-        catch(FormatException)
-        {
-            // Ignore format exceptions, because we warn the user in the config window if they are missing a format symbol 
-        }
+        dtrEntry.Text = new SeStringBuilder().AddText(formattedString).BuiltString;
+        locationChanged = false;
     }
 
     private int GetInstanceNumber() => *(int*) ((byte*) instanceNumber + 32);
