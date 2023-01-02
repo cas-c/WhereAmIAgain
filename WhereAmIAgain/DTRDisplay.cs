@@ -101,7 +101,7 @@ public unsafe class DtrDisplay : IDisposable
                 formattedString += GetCharacterForInstanceNumber(GetInstanceNumber());
             }
 
-            formattedString = Config.FormatString[..preTextEnd] + formattedString + Config.FormatString[..postTextStart];
+            formattedString = Config.FormatString[..preTextEnd] + formattedString + Config.FormatString[postTextStart..];
         }
         catch(FormatException)
         {
