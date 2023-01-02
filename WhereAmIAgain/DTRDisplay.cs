@@ -85,35 +85,32 @@ public unsafe class DtrDisplay : IDisposable
         var postTextStart = Config.FormatString.LastIndexOf("}") + 1;
         var formattedString = Config.FormatString;
         
-        if(preTextEnd > -1 && postTextStart > 0)
+        try
         {
-            try
+            formattedString = formattedString[preTextEnd..postTextStart].Format(
+                currentContinent?.Name.RawString ?? string.Empty,
+                currentTerritory?.Name.RawString ?? string.Empty,
+                currentRegion?.Name.RawString ?? string.Empty,
+                currentSubArea?.Name.RawString ?? string.Empty);
+
+            // Remove separators from between blank values
+            formattedString = Regex.Replace(formattedString, "^[^\\p{L}\\p{N}]*|[^\\p{L}\\p{N}]*$", "");
+
+            if (Config.ShowInstanceNumber)
             {
-                var preText = Config.FormatString.Substring(0, preTextEnd);
-                var postText = Config.FormatString.Substring(postTextStart);
-                formattedString = formattedString.Substring(preTextEnd, postTextStart);
-
-                formattedString = formattedString.Format(
-                    currentContinent?.Name.RawString ?? string.Empty,
-                    currentTerritory?.Name.RawString ?? string.Empty,
-                    currentRegion?.Name.RawString ?? string.Empty,
-                    currentSubArea?.Name.RawString ?? string.Empty);
-
-                // Remove separators from between blank values
-                formattedString = Regex.Replace(formattedString, "^[^\\p{L}\\p{N}]*|[^\\p{L}\\p{N}]*$", "");
-
-                if (Config.ShowInstanceNumber)
-                {
-                    formattedString += GetCharacterForInstanceNumber(GetInstanceNumber());
-                }
-
-                formattedString = preText + formattedString + postText;
+                formattedString += GetCharacterForInstanceNumber(GetInstanceNumber());
             }
-            catch(FormatException)
-            {
-                // Ignore format exceptions, because we warn the user in the config window if they are missing a format symbol 
-            }
+
+            formattedString = Config.FormatString[..preTextEnd] + formattedString + Config.FormatString[..postTextStart];
         }
+        catch(FormatException)
+        {
+            // Ignore format exceptions, because we warn the user in the config window if they are missing a format symbol 
+        }
+        catch(ArgumentOutOfRangeException) {
+            // Ignore range exceptions
+        }
+        
         dtrEntry.Text = new SeStringBuilder().AddText(formattedString).BuiltString;
         locationChanged = false;
     }
