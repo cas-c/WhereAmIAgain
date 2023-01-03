@@ -81,28 +81,39 @@ public unsafe class DtrDisplay : IDisposable
 
     public void UpdateDtrText()
     {
+        var preTextEnd = Config.FormatString.IndexOf('{');
+        var postTextStart = Config.FormatString.LastIndexOf('}') + 1;
+        var formattedString = Config.FormatString;
+        
         try
         {
-            var formattedString = Config.FormatString.Format(
+            formattedString = formattedString[preTextEnd..postTextStart].Format(
                 currentContinent?.Name.RawString ?? string.Empty,
                 currentTerritory?.Name.RawString ?? string.Empty,
                 currentRegion?.Name.RawString ?? string.Empty,
                 currentSubArea?.Name.RawString ?? string.Empty);
 
-            var filteredString = Regex.Replace(formattedString, "^[^\\p{L}\\p{N}]*|[^\\p{L}\\p{N}]*$", "");
+            // Remove separators from between blank values
+            formattedString = Regex.Replace(formattedString, "^[^\\p{L}\\p{N}]*|[^\\p{L}\\p{N}]*$", "");
 
             if (Config.ShowInstanceNumber)
             {
-                filteredString += GetCharacterForInstanceNumber(GetInstanceNumber());
+                formattedString += GetCharacterForInstanceNumber(GetInstanceNumber());
             }
-            
-            dtrEntry.Text = new SeStringBuilder().AddText(filteredString).BuiltString;
-            locationChanged = false;
+
+            formattedString = Config.FormatString[..preTextEnd] + formattedString + Config.FormatString[postTextStart..];
         }
         catch(FormatException)
         {
             // Ignore format exceptions, because we warn the user in the config window if they are missing a format symbol 
         }
+        catch(ArgumentOutOfRangeException)
+        {
+            // Ignore range exceptions
+        }
+        
+        dtrEntry.Text = new SeStringBuilder().AddText(formattedString).BuiltString;
+        locationChanged = false;
     }
 
     private int GetInstanceNumber() => *(int*) ((byte*) instanceNumber + 32);
