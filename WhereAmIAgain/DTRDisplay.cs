@@ -81,8 +81,8 @@ public unsafe class DtrDisplay : IDisposable
 
     public void UpdateDtrText()
     {
-        var preTextEnd = Config.FormatString.IndexOf("{");
-        var postTextStart = Config.FormatString.LastIndexOf("}") + 1;
+        var preTextEnd = Config.FormatString.IndexOf('{');
+        var postTextStart = Config.FormatString.LastIndexOf('}') + 1;
         var formattedString = Config.FormatString;
         
         try
@@ -107,7 +107,8 @@ public unsafe class DtrDisplay : IDisposable
         {
             // Ignore format exceptions, because we warn the user in the config window if they are missing a format symbol 
         }
-        catch(ArgumentOutOfRangeException) {
+        catch(ArgumentOutOfRangeException)
+        {
             // Ignore range exceptions
         }
         
