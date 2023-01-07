@@ -12,7 +12,7 @@ namespace WhereAmIAgain;
 public class ConfigurationWindow : Window, IDisposable
 {
     private readonly WindowSystem windowSystem = new("Where am I again?");
-    private Configuration Configuration => Service.Configuration;
+    private static Configuration Configuration => Service.Configuration;
     
     private const string CommandName = "/waia";
     
@@ -27,7 +27,7 @@ public class ConfigurationWindow : Window, IDisposable
         });
 
         Flags |= ImGuiWindowFlags.AlwaysAutoResize;
-        
+
         windowSystem.AddWindow(this);
     }
 
@@ -81,7 +81,7 @@ public class ConfigurationWindow : Window, IDisposable
         ImGuiComponents.HelpMarker("Shows the instance number for the current instance at the end of the string");
     }
 
-    private bool BracesMismatched()
+    private static bool BracesMismatched()
     {
         return Configuration.FormatString.Count(c => c == '{') != Configuration.FormatString.Count(c => c == '}');
     }

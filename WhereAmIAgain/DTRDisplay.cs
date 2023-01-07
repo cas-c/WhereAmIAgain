@@ -5,7 +5,6 @@ using Dalamud.Game;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
-using Dalamud.Logging;
 using Dalamud.Utility;
 using Dalamud.Utility.Signatures;
 using Lumina.Excel.GeneratedSheets;
@@ -54,12 +53,14 @@ public unsafe class DtrDisplay : IDisposable
         dtrEntry = Service.DtrBar.Get("Where am I again?");
         
         Service.Framework.Update += OnFrameworkUpdate;
+        Service.ClientState.TerritoryChanged += OnZoneChange;
     }
 
     public void Dispose()
     {
         Service.Framework.Update -= OnFrameworkUpdate;
-        
+        Service.ClientState.TerritoryChanged -= OnZoneChange;
+
         dtrEntry.Dispose();
     }
 
@@ -78,6 +79,8 @@ public unsafe class DtrDisplay : IDisposable
             UpdateDtrText();
         }
     }
+    
+    private void OnZoneChange(object? sender, ushort e) => locationChanged = true;
 
     public void UpdateDtrText()
     {
