@@ -25,7 +25,7 @@ public readonly struct TerritoryInfoStruct
 
 public unsafe class DtrDisplay : IDisposable
 {
-    private Configuration Config => Service.Configuration;
+    private static Configuration Config => Service.Configuration;
 
     private PlaceName? currentContinent;
     private PlaceName? currentTerritory;
@@ -121,7 +121,7 @@ public unsafe class DtrDisplay : IDisposable
 
     private int GetInstanceNumber() => *(int*) ((byte*) instanceNumber + 32);
 
-    private string GetCharacterForInstanceNumber(int instance)
+    private static string GetCharacterForInstanceNumber(int instance)
     {
         if (instance == 0) return string.Empty;
         

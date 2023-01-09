@@ -1,14 +1,12 @@
-﻿using System;
-using Dalamud.Plugin;
-using Dalamud.IoC;
+﻿using Dalamud.Plugin;
 
 namespace WhereAmIAgain
 {
-    public sealed class Plugin : IDalamudPlugin, IDisposable
+    public sealed class Plugin : IDalamudPlugin
     {
         public string Name => "Where am I again?";
 
-        public Plugin ([RequiredVersion("1.0")] DalamudPluginInterface pluginInterface)
+        public Plugin (DalamudPluginInterface pluginInterface)
         {
             pluginInterface.Create<Service>();
             
