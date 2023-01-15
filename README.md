@@ -13,6 +13,9 @@ As you move around in-game, your current location will be displayed in the top r
   - Default Display: `Old Sharlayan Aetheryte Plaza, Archon's Design, Old Sharlayan, The Northern Empty`
   - Example Custom Format: `{1} | {2}`
   - Example Custom Display: `Archon's Design | Old Sharlayan`
+  - Example Custom Format 2: `<<{0}>> |`
+  - Example Custom Display 2: `<<Old Sharlayan Aetheryte Plaza>> |`
+    - Thank you to [@mustafakalash](https://github.com/mustafakalash) for the update to allow additional decorative text outside of the actual location string.
 - Display the current instance number you are in if you are in a zone with multiple instances.  
   - Default: On
   - Note to any other plugin devs: Don't use Toasts to find your current location.  The current known signature for this is included in this repository, feel free to make use of it.  Thank you [@NadyaNayme](https://github.com/NadyaNayme) and [@MidoriKami](https://github.com/MidoriKami).
@@ -45,7 +48,7 @@ This version had several limitations and improvements that were needed, which ke
   - Other plugins that create Toast messages, if not using the same text format as FFXIV's built in location strings, could randomly appear in the server info bar.
   - This was resolved by [@MidoriKami](https://github.com/MidoriKami)'s rewrite to bring the plugin more up to snuff with Dalamud standards, which involves grabbing the location name directly, which means the plugin also works now in a region-agnostic way.  The only real downside is the possibility of updates/maintenance being needed when XIV itself updates, but the tradeoff is very worth it.
 - Did not display instance numbers, which was a much asked for feature in various communities (S/SS Rank spawners/hunters as well as Gatherers mostly)
-  - This was also added by [@MidoriKami](https://github.com/MidoriKami) during the rewrite! :)
+  - This was also added by [@MidoriKami](https://github.com/MidoriKami) during the rewrite, with help from [@NadyaNayme](https://github.com/NadyaNayme)! :)
 - Very inefficient.
   - Previously, the parsing code would check if the location had changed both on every frame update as well as toast updates.  This was because when you teleport into a new location or start the plugin, the toast isn't popped up -- which meant to display when you are immediately when teleport somewhere, we were checking on every update.  This wasn't a game breaking deal but did get quite inefficient to the point that some other plugin devs noticed, and [@MidoriKami](https://github.com/MidoriKami) rewrote in order to resolve this as well.  Thanks should go to [@Jessidhia](https://github.com/MidoriKami), [@NadyaNayme](https://github.com/NadyaNayme), and of course [@MidoriKami](https://github.com/MidoriKami) for this.
 
