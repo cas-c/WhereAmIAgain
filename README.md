@@ -4,13 +4,9 @@ A Dalamud plugin to display your current location on screen at all times in plai
 
 ## What's it do?
 
----
-
 As you move around in-game, your current location will be displayed in the top right corner of your screen, next to your server information / clocks.
 
 ### Features
-
-
 
 - Display as much / as little location information as you'd like, separated in whatever way you'd like, with support for preceding and trailing characters.
   - Default Format: `{0}, {1}, {2}, {3}`)
@@ -23,8 +19,6 @@ As you move around in-game, your current location will be displayed in the top r
 
 ## How do I use it?
 
----
-
 You can use the chat command `/waia` to open up the configuration screen.
 
 From there, you can turn off the instance number display, as well as change the separators between each location and the order to your liking by simply adjusting the format string in the text box.
@@ -32,8 +26,6 @@ From there, you can turn off the instance number display, as well as change the 
 By default, the location is printed in order of most specificity to least, followed by the instance number.
 
 ## How was this made?
-
----
 
 Originally, this plugin was created simply to display the current area info.  ("Highbridge, Wellwick Wood" while on the Highbridge in Eastern Thanalan.)  This wasn't available in existing plugins that @cassandra308 could find, so it was filled in by parsing the text that appears on your screen when you move from one area to another.
 
@@ -46,7 +38,7 @@ Then, the found location name was inserted manually into the area next to the se
 This version had several limitations and improvements that were needed, which kept the plugin in test mode for a year or so:
 
 - As already mentioned, clashed with Orchestrion, a very loved plugin
-  -  This was resolved when Dalamud introduced the DTR bar to accomadate the new plugins being created which all wished to inject text into the same place (the server information area).
+  - This was resolved when Dalamud introduced the DTR bar to accomadate the new plugins being created which all wished to inject text into the same place (the server information area).
 - Very brittle handling of edge cases due to use of regex on toast messages.
   - For example, the dungeon Amaurot's names were all tested against hardcoded strings due to their oddness compared to the rest of the location names, which made it not work in any language except English
   - Non-English language punctuation was missed occasionally
@@ -60,8 +52,6 @@ This version had several limitations and improvements that were needed, which ke
 All of these existing issues culminated in needing a fairly extensive rewrite from the ground up, which was done by @MidoriKami, and this current rewritten version is what exists in the Dalamud plugins today.
 
 ### Afterword
-
----
 
 A very big thank you to @reiichi001 and @MidoriKami for helping to maintain and keep this alive even after it was dropped into Dalamud testing by a C#/RE noob and then neglected for a bit, as well as all the other plugin devs who helped/sig hunted/heckled this plugin into the much better state it now is in today.  Big learning project and @cassandra308 is very, very grateful.  Also, thank you to the various people who tested and gave lots of feedback and requested useful features!
 
