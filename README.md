@@ -51,7 +51,7 @@ This version had several limitations and improvements that were needed, which ke
 
 All of these existing issues culminated in needing a fairly extensive rewrite from the ground up, which was done by [@MidoriKami](https://github.com/MidoriKami), and this current rewritten version is what exists in the Dalamud plugins today.
 
-### Afterword
+## Afterword
 
 A very big thank you to [@reiichi001](https://github.com/reiichi001) and [@MidoriKami](https://github.com/MidoriKami) for helping to maintain and keep this alive even after it was dropped into Dalamud testing by a C#/RE noob and then neglected for a bit, as well as all the other plugin devs who helped/sig hunted/heckled this plugin into the much better state it now is in today.  Big learning project and [@cassandra308](https://github.com/cassandra308) is very, very grateful.  Also, thank you to the various people who tested and gave lots of feedback and requested useful features!
 
