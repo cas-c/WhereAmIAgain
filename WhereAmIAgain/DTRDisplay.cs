@@ -7,6 +7,7 @@ using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
 using Dalamud.Utility.Signatures;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.GeneratedSheets;
 
 namespace WhereAmIAgain;
@@ -42,9 +43,6 @@ public unsafe class DtrDisplay : IDisposable
     
     [Signature("8B 2D ?? ?? ?? ?? 41 BF", ScanType = ScanType.StaticAddress)]
     private readonly TerritoryInfoStruct* territoryInfo = null!;
-
-    [Signature("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 80 BD", ScanType = ScanType.StaticAddress)]
-    private readonly int* instanceNumber = null!;
 
     public DtrDisplay()
     {
@@ -101,7 +99,7 @@ public unsafe class DtrDisplay : IDisposable
 
             if (Config.ShowInstanceNumber)
             {
-                formattedString += GetCharacterForInstanceNumber(GetInstanceNumber());
+                formattedString += GetCharacterForInstanceNumber(UIState.Instance()->AreaInstance.Instance);
             }
 
             formattedString = Config.FormatString[..preTextEnd] + formattedString + Config.FormatString[postTextStart..];
@@ -118,8 +116,6 @@ public unsafe class DtrDisplay : IDisposable
         dtrEntry.Text = new SeStringBuilder().AddText(formattedString).BuiltString;
         locationChanged = false;
     }
-
-    private int GetInstanceNumber() => *(int*) ((byte*) instanceNumber + 32);
 
     private static string GetCharacterForInstanceNumber(int instance)
     {
