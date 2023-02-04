@@ -1,30 +1,18 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Dalamud.Game;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
-using Dalamud.Utility.Signatures;
+using FFXIVClientStructs.FFXIV.Client.Game.Housing;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.GeneratedSheets;
 
 namespace WhereAmIAgain;
 
-[StructLayout(LayoutKind.Explicit, Size = 76)]
-public readonly struct TerritoryInfoStruct
-{
-    [FieldOffset(8)] private readonly int InSanctuary;
-    [FieldOffset(16)] public readonly uint RegionID;
-    [FieldOffset(20)] public readonly uint SubAreaID;
-
-    public bool IsInSanctuary => InSanctuary == 1;
-    public PlaceName? Region => Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(RegionID);
-    public PlaceName? SubArea => Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(SubAreaID);
-}
-
-public unsafe class DtrDisplay : IDisposable
+public unsafe partial class DtrDisplay : IDisposable
 {
     private static Configuration Config => Service.Configuration;
 
@@ -32,22 +20,28 @@ public unsafe class DtrDisplay : IDisposable
     private PlaceName? currentTerritory;
     private PlaceName? currentRegion;
     private PlaceName? currentSubArea;
+    private string? currentWard;
+
+    private static TerritoryInfo* AreaInfo => TerritoryInfo.Instance();
+    private static HousingManager* HousingInfo => HousingManager.Instance();
 
     private uint lastTerritory;
     private uint lastRegion;
     private uint lastSubArea;
+    private uint lastHousingWard;
 
     private readonly DtrBarEntry dtrEntry;
 
     private bool locationChanged;
     
-    [Signature("8B 2D ?? ?? ?? ?? 41 BF", ScanType = ScanType.StaticAddress)]
-    private readonly TerritoryInfoStruct* territoryInfo = null!;
-
+    [GeneratedRegex("(?<={\\p{N}})")]
+    private static partial Regex SubstringSplitRegex();
+    
+    [GeneratedRegex("[^\\p{L}\\p{N}]*$")]
+    private static partial Regex DoesNotEndWithAlphanumericRegex();
+    
     public DtrDisplay()
     {
-        SignatureHelper.Initialise(this);
-
         dtrEntry = Service.DtrBar.Get("Where am I again?");
         
         Service.Framework.Update += OnFrameworkUpdate;
@@ -67,17 +61,16 @@ public unsafe class DtrDisplay : IDisposable
         if (Service.ClientState.LocalPlayer is null) return;
 
         UpdateRegion();
-
         UpdateSubArea();
-        
         UpdateTerritory();
+        UpdateHousing();
         
         if (locationChanged)
         {
             UpdateDtrText();
         }
     }
-    
+
     private void OnZoneChange(object? sender, ushort e) => locationChanged = true;
 
     public void UpdateDtrText()
@@ -88,21 +81,38 @@ public unsafe class DtrDisplay : IDisposable
         
         try
         {
-            formattedString = formattedString[preTextEnd..postTextStart].Format(
-                currentContinent?.Name.RawString ?? string.Empty,
-                currentTerritory?.Name.RawString ?? string.Empty,
-                currentRegion?.Name.RawString ?? string.Empty,
-                currentSubArea?.Name.RawString ?? string.Empty);
+            // Split the string into individual format specifiers
+            
+            // Example List:
+            // {0}
+            // , {1}
+            // , {2}
+            // , {3}
+            var substrings = SubstringSplitRegex().Split(formattedString[preTextEnd..postTextStart]);
 
-            // Remove separators from between blank values
-            formattedString = Regex.Replace(formattedString, "^[^\\p{L}\\p{N}]*|[^\\p{L}\\p{N}]*$", "");
-
+            // Get a string with intermediary symbols removed
+            var internalString = substrings
+                    
+                    // Fill each substring with the correct format data
+                .Select(str => str.Format(
+                    currentContinent?.Name.RawString ?? string.Empty, 
+                    currentTerritory?.Name.RawString ?? string.Empty, 
+                    currentRegion?.Name.RawString ?? string.Empty, 
+                    currentSubArea?.Name.RawString ?? string.Empty, 
+                    currentWard ?? string.Empty))
+                
+                    // Starting at the end of each substring, work backwards and replace all non-alphanumeric symbols with empty
+                .Select(substring => DoesNotEndWithAlphanumericRegex().Replace(substring, string.Empty))
+                    
+                    // Append all of the strings together, entries that were entirely separators were replaced with string.Empty
+                .Aggregate(string.Empty, (current, newStr) => current + newStr);
+            
             if (Config.ShowInstanceNumber)
             {
                 formattedString += GetCharacterForInstanceNumber(UIState.Instance()->AreaInstance.Instance);
             }
 
-            formattedString = Config.FormatString[..preTextEnd] + formattedString + Config.FormatString[postTextStart..];
+            formattedString = Config.FormatString[..preTextEnd] + internalString + Config.FormatString[postTextStart..];
         }
         catch(FormatException)
         {
@@ -129,8 +139,7 @@ public unsafe class DtrDisplay : IDisposable
         if (lastTerritory != Service.ClientState.TerritoryType)
         {
             lastTerritory = Service.ClientState.TerritoryType;
-            var territory = Service.DataManager.GetExcelSheet<TerritoryType>()!
-                .GetRow(Service.ClientState.TerritoryType);
+            var territory = Service.DataManager.GetExcelSheet<TerritoryType>()!.GetRow(Service.ClientState.TerritoryType);
 
             currentTerritory = territory?.PlaceName.Value;
             currentContinent = territory?.PlaceNameRegion.Value;
@@ -140,21 +149,41 @@ public unsafe class DtrDisplay : IDisposable
 
     private void UpdateSubArea()
     {
-        if (lastSubArea != territoryInfo->SubAreaID)
+        if (lastSubArea != AreaInfo->SubAreaPlaceNameID)
         {
-            lastSubArea = territoryInfo->SubAreaID;
-            currentSubArea = territoryInfo->SubArea;
+            lastSubArea = AreaInfo->SubAreaPlaceNameID;
+            currentSubArea = GetPlaceName(AreaInfo->SubAreaPlaceNameID);
             locationChanged = true;
         }
     }
 
     private void UpdateRegion()
     {
-        if (lastRegion != territoryInfo->RegionID)
+        if (lastRegion != AreaInfo->AreaPlaceNameID)
         {
-            lastRegion = territoryInfo->RegionID;
-            currentRegion = territoryInfo->Region;
+            lastRegion = AreaInfo->AreaPlaceNameID;
+            currentRegion = GetPlaceName(AreaInfo->AreaPlaceNameID);
             locationChanged = true;
         }
     }
+    
+    private void UpdateHousing()
+    {
+        if (HousingInfo is null || HousingInfo->CurrentTerritory is null)
+        {
+            currentWard = null;
+            return;
+        }
+
+        var ward = (HousingInfo->CurrentTerritory->HouseID >> 16 & 0xFF) + 1;
+
+        if (lastHousingWard != ward)
+        {
+            lastHousingWard = ward;
+            currentWard = $"Ward {ward}";
+            locationChanged = true;
+        }
+    }
+    
+    private static PlaceName? GetPlaceName(uint row) => Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(row);
 }

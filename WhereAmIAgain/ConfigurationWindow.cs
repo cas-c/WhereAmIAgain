@@ -38,15 +38,16 @@ public class ConfigurationWindow : Window, IDisposable
     public override void Draw()
     {
         ImGui.Text("Use the text box below to define how you want the text to be formatted.\n" +
-                   "Use symbols {0} {1} {2} {3} where you want the following values to be in the string\n\n" +
+                   "Use symbols {0} {1} {2} {3} {4} where you want the following values to be in the string\n\n" +
                    "{0} - Region (Ex. The Northern Empty)\n" +
                    "{1} - Territory (Ex. Old Sharlayan)\n" +
                    "{2} - Area (Ex. Archon's Design)\n" +
-                   "{3} - Sub-Area (Ex. Old Sharlayan Aetheryte Plaza)");
+                   "{3} - Sub-Area (Ex. Old Sharlayan Aetheryte Plaza)\n" +
+                   "{4} - Housing Ward (Ex. Ward 14)");
         
         ImGuiHelpers.ScaledDummy(10.0f);
 
-        if (ImGui.InputText("##InputString", ref Configuration.FormatString, 35))
+        if (ImGui.InputText("##InputString", ref Configuration.FormatString, 45))
         {
             Service.DtrDisplay.UpdateDtrText();
         }
