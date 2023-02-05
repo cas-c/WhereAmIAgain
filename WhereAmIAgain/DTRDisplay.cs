@@ -40,6 +40,9 @@ public unsafe partial class DtrDisplay : IDisposable
     [GeneratedRegex("[^\\p{L}\\p{N}]*$")]
     private static partial Regex DoesNotEndWithAlphanumericRegex();
     
+    [GeneratedRegex("^[^\\p{L}\\p{N}]*|")]
+    private static partial Regex DoesNotStartWithAlphanumericRegex();
+    
     public DtrDisplay()
     {
         dtrEntry = Service.DtrBar.Get("Where am I again?");
@@ -106,6 +109,9 @@ public unsafe partial class DtrDisplay : IDisposable
                     
                     // Append all of the strings together, entries that were entirely separators were replaced with string.Empty
                 .Aggregate(string.Empty, (current, newStr) => current + newStr);
+
+            // Strip non-alphanumeric characters from the start of the internal string
+            internalString = DoesNotStartWithAlphanumericRegex().Replace(internalString, string.Empty);
             
             if (Config.ShowInstanceNumber)
             {
