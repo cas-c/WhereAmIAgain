@@ -109,7 +109,7 @@ public unsafe partial class DtrDisplay : IDisposable
             
             if (Config.ShowInstanceNumber)
             {
-                formattedString += GetCharacterForInstanceNumber(UIState.Instance()->AreaInstance.Instance);
+                internalString += GetCharacterForInstanceNumber(UIState.Instance()->AreaInstance.Instance);
             }
 
             formattedString = Config.FormatString[..preTextEnd] + internalString + Config.FormatString[postTextStart..];
