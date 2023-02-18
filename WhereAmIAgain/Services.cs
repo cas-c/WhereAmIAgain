@@ -3,6 +3,7 @@ using Dalamud.Game;
 using Dalamud.Game.ClientState;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui.Dtr;
+using Dalamud.Interface.GameFonts;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 
@@ -20,4 +21,6 @@ public class Service
     public static Configuration Configuration { get; set; } = null!;
     public static ConfigurationWindow ConfigurationWindow { get; set; } = null!;
     public static DtrDisplay DtrDisplay { get; set; } = null!;
+    public static GameFontHandle AxisFont { get; set; } = null!;
+
 }

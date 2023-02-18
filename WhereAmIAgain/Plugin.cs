@@ -1,26 +1,28 @@
-﻿using Dalamud.Plugin;
+﻿using Dalamud.Interface.GameFonts;
+using Dalamud.Plugin;
 
-namespace WhereAmIAgain
+namespace WhereAmIAgain;
+
+public sealed class Plugin : IDalamudPlugin
 {
-    public sealed class Plugin : IDalamudPlugin
+    public string Name => "Where am I again?";
+
+    public Plugin (DalamudPluginInterface pluginInterface)
     {
-        public string Name => "Where am I again?";
-
-        public Plugin (DalamudPluginInterface pluginInterface)
-        {
-            pluginInterface.Create<Service>();
+        pluginInterface.Create<Service>();
             
-            Service.Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            Service.Configuration.Initialize(pluginInterface);
+        Service.Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+        Service.Configuration.Initialize(pluginInterface);
 
-            Service.DtrDisplay = new DtrDisplay();
-            Service.ConfigurationWindow = new ConfigurationWindow();
-        }
+        Service.AxisFont = Service.PluginInterface.UiBuilder.GetGameFontHandle(new GameFontStyle(GameFontFamilyAndSize.Axis12));
+        Service.DtrDisplay = new DtrDisplay();
+        Service.ConfigurationWindow = new ConfigurationWindow();
+    }
 
-        public void Dispose()
-        {
-            Service.ConfigurationWindow.Dispose();
-            Service.DtrDisplay.Dispose();
-        }
+    public void Dispose()
+    {
+        Service.AxisFont.Dispose();
+        Service.ConfigurationWindow.Dispose();
+        Service.DtrDisplay.Dispose();
     }
 }

@@ -47,6 +47,8 @@ public class ConfigurationWindow : Window, IDisposable
         
         ImGuiHelpers.ScaledDummy(10.0f);
 
+        ImGui.PushFont(Service.AxisFont.ImFont);
+        
         if (ImGui.InputText("##InputString", ref Configuration.FormatString, 45))
         {
             Service.DtrDisplay.UpdateDtrText();
@@ -59,6 +61,8 @@ public class ConfigurationWindow : Window, IDisposable
                 Service.Configuration.Save();
             }
         }
+        
+        ImGui.PopFont();
         
         ImGui.SameLine();
         if (ImGui.Button("Reset To Default"))
