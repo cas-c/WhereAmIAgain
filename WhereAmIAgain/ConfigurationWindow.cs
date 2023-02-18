@@ -49,7 +49,7 @@ public class ConfigurationWindow : Window, IDisposable
 
         ImGui.PushFont(Service.AxisFont.ImFont);
         
-        if (ImGui.InputText("##InputString", ref Configuration.FormatString, 45))
+        if (ImGui.InputText("##InputString", ref Configuration.FormatString, 2047))
         {
             Service.DtrDisplay.UpdateDtrText();
         }
