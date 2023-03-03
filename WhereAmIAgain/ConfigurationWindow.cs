@@ -84,6 +84,12 @@ public class ConfigurationWindow : Window, IDisposable
             Service.Configuration.Save();
         }
         ImGuiComponents.HelpMarker("Shows the instance number for the current instance at the end of the string");
+
+        if (ImGui.Checkbox("Show Precise Housing Location", ref Configuration.UsePreciseHousingLocation))
+        {
+            Service.Configuration.Save();
+        }
+        ImGuiComponents.HelpMarker("Replaces 'Ward 14' with  `Ward 14 Subdivision Plot 23`");
     }
 
     private static bool BracesMismatched()

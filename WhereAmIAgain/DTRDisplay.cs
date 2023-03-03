@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Dalamud.Game;
@@ -28,7 +29,10 @@ public unsafe partial class DtrDisplay : IDisposable
     private uint lastTerritory;
     private uint lastRegion;
     private uint lastSubArea;
-    private uint lastHousingWard;
+    private sbyte lastHousingWard;
+    private short lastHousingRoom;
+    private sbyte lastHousingPlot;
+    private byte lastHousingDivision;
 
     private readonly DtrBarEntry dtrEntry;
 
@@ -66,7 +70,15 @@ public unsafe partial class DtrDisplay : IDisposable
         UpdateRegion();
         UpdateSubArea();
         UpdateTerritory();
-        UpdateHousing();
+
+        if (Service.Configuration.UsePreciseHousingLocation)
+        {
+            UpdatePreciseHousing();
+        }
+        else
+        {
+            UpdateHousing();
+        }
         
         if (locationChanged)
         {
@@ -181,7 +193,7 @@ public unsafe partial class DtrDisplay : IDisposable
             return;
         }
 
-        var ward = (HousingInfo->CurrentTerritory->HouseID >> 16 & 0xFF) + 1;
+        var ward = (sbyte) (HousingInfo->GetCurrentWard() + 1);
 
         if (lastHousingWard != ward)
         {
@@ -191,5 +203,62 @@ public unsafe partial class DtrDisplay : IDisposable
         }
     }
     
+    private void UpdatePreciseHousing()
+    {
+        if (HousingInfo is null)
+        {
+            currentWard = null;
+            return;
+        }
+
+        var ward = HousingInfo->GetCurrentWard();
+        var room = HousingInfo->GetCurrentRoom();
+        var plot = HousingInfo->GetCurrentPlot();
+        var division = HousingInfo->GetCurrentDivision();
+
+        if (ward != lastHousingWard || room != lastHousingRoom || plot != lastHousingPlot || division != lastHousingDivision)
+        {
+            lastHousingWard = ward;
+            lastHousingRoom = room;
+            lastHousingPlot = plot;
+            lastHousingDivision = division;
+            currentWard = GetCurrentHouseAddress();
+            locationChanged = true;
+        }
+    }
+    
+    public string GetCurrentHouseAddress() 
+    {
+        var housingManager = HousingManager.Instance();
+        if (housingManager == null) return string.Empty;
+        var strings = new List<string>();
+    
+        var ward = housingManager->GetCurrentWard() + 1;
+        if (ward == 0) return string.Empty;
+
+        var plot = housingManager->GetCurrentPlot();
+        var room = housingManager->GetCurrentRoom();
+        var division = housingManager->GetCurrentDivision();
+    
+        strings.Add($"Ward {ward}");
+        if (division == 2 || plot is >= 30 or -127) strings.Add($"Subdivision");
+
+        switch (plot) 
+        {
+            case < -1:
+                strings.Add($"Apartment {(room == 0 ? $"Lobby" : $"{room}")}");
+                break;
+            
+            case > -1: 
+                strings.Add($"Plot {plot+1}");
+                if (room > 0) {
+                    strings.Add($"Room {room}");
+                }
+                break;
+        }
+
+        return string.Join(" ", strings);
+    }
+
     private static PlaceName? GetPlaceName(uint row) => Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(row);
 }

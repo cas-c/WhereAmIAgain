@@ -11,6 +11,7 @@ public class Configuration : IPluginConfiguration
 
     public string FormatString = "{0}, {1}, {2}, {3}";
     public bool ShowInstanceNumber = true;
+    public bool UsePreciseHousingLocation = false;
 
     [NonSerialized]
     private DalamudPluginInterface? pluginInterface;

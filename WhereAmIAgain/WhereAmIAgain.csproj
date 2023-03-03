@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<AssemblyVersion>0.0.2.5</AssemblyVersion>
+	<AssemblyVersion>0.0.3.0</AssemblyVersion>
     <Description>Shows what zone/region/territory you are in next to the server info.</Description>
     <PackageProjectUrl>https://github.com/cassandra308/WhereAmIAgain</PackageProjectUrl>
   </PropertyGroup>
