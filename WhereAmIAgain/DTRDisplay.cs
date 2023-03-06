@@ -1,17 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Dalamud.Game;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Utility;
+using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game.Housing;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.GeneratedSheets;
 
 namespace WhereAmIAgain;
+
+[StructLayout(LayoutKind.Explicit, Size = 0x60)]
+public struct TerritoryInfo
+{
+    [FieldOffset(0x1C)] public int InSanctuary;
+    [FieldOffset(0x24)] public uint AreaPlaceNameID;
+    [FieldOffset(0x28)] public uint SubAreaPlaceNameID;
+
+    public bool IsInSanctuary() => InSanctuary != 0;
+}
 
 public unsafe partial class DtrDisplay : IDisposable
 {
@@ -23,7 +35,8 @@ public unsafe partial class DtrDisplay : IDisposable
     private PlaceName? currentSubArea;
     private string? currentWard;
 
-    private static TerritoryInfo* AreaInfo => TerritoryInfo.Instance();
+    [Signature("48 8D 0D ?? ?? ?? ?? BA ?? ?? ?? ?? F3 0F 5C 05", ScanType = ScanType.StaticAddress)]
+    private static TerritoryInfo* AreaInfo = null!;
     private static HousingManager* HousingInfo => HousingManager.Instance();
 
     private uint lastTerritory;
@@ -49,6 +62,8 @@ public unsafe partial class DtrDisplay : IDisposable
     
     public DtrDisplay()
     {
+        SignatureHelper.Initialise(this);
+        
         dtrEntry = Service.DtrBar.Get("Where am I again?");
         
         Service.Framework.Update += OnFrameworkUpdate;
