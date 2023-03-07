@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Dalamud.Game;
 using Dalamud.Game.Gui.Dtr;
@@ -15,16 +14,6 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace WhereAmIAgain;
 
-[StructLayout(LayoutKind.Explicit, Size = 0x60)]
-public struct TerritoryInfo
-{
-    [FieldOffset(0x1C)] public int InSanctuary;
-    [FieldOffset(0x24)] public uint AreaPlaceNameID;
-    [FieldOffset(0x28)] public uint SubAreaPlaceNameID;
-
-    public bool IsInSanctuary() => InSanctuary != 0;
-}
-
 public unsafe partial class DtrDisplay : IDisposable
 {
     private static Configuration Config => Service.Configuration;
@@ -35,8 +24,7 @@ public unsafe partial class DtrDisplay : IDisposable
     private PlaceName? currentSubArea;
     private string? currentWard;
 
-    [Signature("48 8D 0D ?? ?? ?? ?? BA ?? ?? ?? ?? F3 0F 5C 05", ScanType = ScanType.StaticAddress)]
-    private static TerritoryInfo* AreaInfo = null!;
+    private static TerritoryInfo* AreaInfo => TerritoryInfo.Instance();
     private static HousingManager* HousingInfo => HousingManager.Instance();
 
     private uint lastTerritory;
