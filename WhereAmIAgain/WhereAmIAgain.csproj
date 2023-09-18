@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+    <DalamudLibPath>D:\Documents\Visual Studio 2022\Repositories\ExternalProjects\Dalamud\bin\Debug\</DalamudLibPath>
   </PropertyGroup>
 
   <ItemGroup>

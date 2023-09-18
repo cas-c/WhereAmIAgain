@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Dalamud.Game;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game.Housing;
@@ -16,7 +16,7 @@ namespace WhereAmIAgain;
 
 public unsafe partial class DtrDisplay : IDisposable
 {
-    private static Configuration Config => Service.Configuration;
+    private static Configuration Config => WhereAmIAgainPlugin.Configuration;
 
     private PlaceName? currentContinent;
     private PlaceName? currentTerritory;
@@ -42,10 +42,10 @@ public unsafe partial class DtrDisplay : IDisposable
     [GeneratedRegex("(?<={\\p{N}})")]
     private static partial Regex SubstringSplitRegex();
     
-    [GeneratedRegex("[^\\p{L}\\p{N}]*$")]
+    [GeneratedRegex(@"[^\p{L}\p{N}]*$")]
     private static partial Regex DoesNotEndWithAlphanumericRegex();
     
-    [GeneratedRegex("^[^\\p{L}\\p{N}]*|")]
+    [GeneratedRegex(@"^[^\p{L}\p{N}]*|")]
     private static partial Regex DoesNotStartWithAlphanumericRegex();
     
     public DtrDisplay()
@@ -53,6 +53,11 @@ public unsafe partial class DtrDisplay : IDisposable
         SignatureHelper.Initialise(this);
         
         dtrEntry = Service.DtrBar.Get("Where am I again?");
+
+        dtrEntry.OnClick += () =>
+        {
+            WhereAmIAgainPlugin.ConfigurationWindow.Toggle();
+        };
         
         Service.Framework.Update += OnFrameworkUpdate;
         Service.ClientState.TerritoryChanged += OnZoneChange;
@@ -66,7 +71,7 @@ public unsafe partial class DtrDisplay : IDisposable
         dtrEntry.Dispose();
     }
 
-    private void OnFrameworkUpdate(Framework framework)
+    private void OnFrameworkUpdate(IFramework framework)
     {
         if (Service.ClientState.LocalPlayer is null) return;
 
@@ -74,7 +79,7 @@ public unsafe partial class DtrDisplay : IDisposable
         UpdateSubArea();
         UpdateTerritory();
 
-        if (Service.Configuration.UsePreciseHousingLocation)
+        if (WhereAmIAgainPlugin.Configuration.UsePreciseHousingLocation)
         {
             UpdatePreciseHousing();
         }
@@ -93,14 +98,24 @@ public unsafe partial class DtrDisplay : IDisposable
 
     public void UpdateDtrText()
     {
-        var preTextEnd = Config.FormatString.IndexOf('{');
-        var postTextStart = Config.FormatString.LastIndexOf('}') + 1;
-        var formattedString = Config.FormatString;
-        
+        var dtrString = FormatString(Config.FormatString);
+        var tooltipString = FormatString(Config.TooltipFormatString);
+
+        dtrEntry.Text = new SeStringBuilder().AddText(dtrString).BuiltString;
+        dtrEntry.Tooltip = new SeStringBuilder().AddText(tooltipString).BuiltString;
+        locationChanged = false;
+    }
+    
+    private string FormatString(string inputFormat)
+    {
+        var preTextEnd = inputFormat.IndexOf('{');
+        var postTextStart = inputFormat.LastIndexOf('}') + 1;
+        var formattedString = inputFormat;
+
         try
         {
             // Split the string into individual format specifiers
-            
+
             // Example List:
             // {0}
             // , {1}
@@ -110,42 +125,41 @@ public unsafe partial class DtrDisplay : IDisposable
 
             // Get a string with intermediary symbols removed
             var internalString = substrings
-                    
-                    // Fill each substring with the correct format data
+
+                // Fill each substring with the correct format data
                 .Select(str => str.Format(
-                    currentContinent?.Name.RawString ?? string.Empty, 
-                    currentTerritory?.Name.RawString ?? string.Empty, 
-                    currentRegion?.Name.RawString ?? string.Empty, 
-                    currentSubArea?.Name.RawString ?? string.Empty, 
+                    currentContinent?.Name.RawString ?? string.Empty,
+                    currentTerritory?.Name.RawString ?? string.Empty,
+                    currentRegion?.Name.RawString ?? string.Empty,
+                    currentSubArea?.Name.RawString ?? string.Empty,
                     currentWard ?? string.Empty))
-                
-                    // Starting at the end of each substring, work backwards and replace all non-alphanumeric symbols with empty
+
+                // Starting at the end of each substring, work backwards and replace all non-alphanumeric symbols with empty
                 .Select(substring => DoesNotEndWithAlphanumericRegex().Replace(substring, string.Empty))
-                    
-                    // Append all of the strings together, entries that were entirely separators were replaced with string.Empty
+
+                // Append all of the strings together, entries that were entirely separators were replaced with string.Empty
                 .Aggregate(string.Empty, (current, newStr) => current + newStr);
 
             // Strip non-alphanumeric characters from the start of the internal string
             internalString = DoesNotStartWithAlphanumericRegex().Replace(internalString, string.Empty);
-            
+
             if (Config.ShowInstanceNumber)
             {
                 internalString += GetCharacterForInstanceNumber(UIState.Instance()->AreaInstance.Instance);
             }
 
-            formattedString = Config.FormatString[..preTextEnd] + internalString + Config.FormatString[postTextStart..];
+            formattedString = inputFormat[..preTextEnd] + internalString + inputFormat[postTextStart..];
         }
-        catch(FormatException)
+        catch (FormatException)
         {
             // Ignore format exceptions, because we warn the user in the config window if they are missing a format symbol 
         }
-        catch(ArgumentOutOfRangeException)
+        catch (ArgumentOutOfRangeException)
         {
             // Ignore range exceptions
         }
         
-        dtrEntry.Text = new SeStringBuilder().AddText(formattedString).BuiltString;
-        locationChanged = false;
+        return formattedString;
     }
 
     private static string GetCharacterForInstanceNumber(int instance)
@@ -229,8 +243,8 @@ public unsafe partial class DtrDisplay : IDisposable
             locationChanged = true;
         }
     }
-    
-    public string GetCurrentHouseAddress() 
+
+    private string GetCurrentHouseAddress() 
     {
         var housingManager = HousingManager.Instance();
         if (housingManager == null) return string.Empty;
