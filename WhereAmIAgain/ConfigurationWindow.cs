@@ -23,7 +23,7 @@ public class ConfigurationWindow : Window, IDisposable
         
         Service.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Displays the local in-game zone next to your server info."
+            HelpMessage = "Open configuration window."
         });
 
         Flags |= ImGuiWindowFlags.AlwaysAutoResize;
