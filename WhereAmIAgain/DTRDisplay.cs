@@ -94,7 +94,7 @@ public unsafe partial class DtrDisplay : IDisposable
         }
     }
 
-    private void OnZoneChange(object? sender, ushort e) => locationChanged = true;
+    private void OnZoneChange(ushort e) => locationChanged = true;
 
     public void UpdateDtrText()
     {
