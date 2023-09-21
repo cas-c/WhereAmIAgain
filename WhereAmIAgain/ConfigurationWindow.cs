@@ -23,7 +23,7 @@ public class ConfigurationWindow : Window, IDisposable
         
         Service.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Open configuration window."
+            HelpMessage = "Open configuration window"
         });
 
         Flags |= ImGuiWindowFlags.AlwaysAutoResize;
