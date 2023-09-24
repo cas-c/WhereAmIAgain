@@ -66,6 +66,7 @@ public unsafe partial class DtrDisplay : IDisposable
         Service.Framework.Update -= OnFrameworkUpdate;
         Service.ClientState.TerritoryChanged -= OnZoneChange;
 
+        dtrEntry.OnClick = null;
         dtrEntry.Dispose();
     }
 
