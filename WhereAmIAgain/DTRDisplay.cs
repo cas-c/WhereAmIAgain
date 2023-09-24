@@ -50,8 +50,6 @@ public unsafe partial class DtrDisplay : IDisposable
     
     public DtrDisplay()
     {
-        SignatureHelper.Initialise(this);
-        
         dtrEntry = Service.DtrBar.Get("Where am I again?");
 
         dtrEntry.OnClick += () =>
