@@ -1,4 +1,5 @@
 # Where am I again?
+[![Download count](https://img.shields.io/endpoint?url=https://qzysathwfhebdai6xgauhz4q7m0mzmrf.lambda-url.us-east-1.on.aws/WhereAmIAgain)](https://github.com/cas-c/WhereAmIAgain)
 
 A Dalamud plugin to display your current location on screen at all times in plain text.
 
