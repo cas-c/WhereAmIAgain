@@ -33,7 +33,7 @@ public class ConfigurationWindow : Window, IDisposable
 
     private void OnCommand(string command, string arguments) => Toggle();
     private void DrawUI() => windowSystem.Draw();
-    private void DrawConfigUI() => IsOpen = true;
+    private void DrawConfigUI() => Toggle();
 
     public override void Draw()
     {
