@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
@@ -13,7 +11,7 @@ using Lumina.Excel.GeneratedSheets;
 
 namespace WhereAmIAgain;
 
-public unsafe partial class DtrDisplay : IDisposable
+public unsafe class DtrDisplay : IDisposable
 {
     private static Configuration Config => WhereAmIAgainPlugin.Configuration;
 
@@ -37,15 +35,6 @@ public unsafe partial class DtrDisplay : IDisposable
     private readonly DtrBarEntry dtrEntry;
 
     private bool locationChanged;
-    
-    [GeneratedRegex("(?<={\\p{N}})")]
-    private static partial Regex SubstringSplitRegex();
-    
-    [GeneratedRegex(@"[^\p{L}\p{N}]*$")]
-    private static partial Regex DoesNotEndWithAlphanumericRegex();
-    
-    [GeneratedRegex(@"^[^\p{L}\p{N}]*|")]
-    private static partial Regex DoesNotStartWithAlphanumericRegex();
     
     public DtrDisplay()
     {
@@ -97,67 +86,52 @@ public unsafe partial class DtrDisplay : IDisposable
     public void UpdateDtrText()
     {
         var dtrString = FormatString(Config.FormatString);
-        var tooltipString = FormatString(Config.TooltipFormatString);
+        // var tooltipString = FormatString(Config.TooltipFormatString);
 
         dtrEntry.Text = new SeStringBuilder().AddText(dtrString).BuiltString;
-        dtrEntry.Tooltip = new SeStringBuilder().AddText(tooltipString).BuiltString;
+        // dtrEntry.Tooltip = new SeStringBuilder().AddText(tooltipString).BuiltString;
         locationChanged = false;
     }
+
+    private string GetStringForIndex(int index) => index switch
+    {
+        0 => currentContinent?.Name.RawString ?? string.Empty,
+        1 => currentTerritory?.Name.RawString ?? string.Empty,
+        2 => currentRegion?.Name.RawString ?? string.Empty,
+        3 => currentSubArea?.Name.RawString ?? string.Empty,
+        4 => currentWard ?? string.Empty,
+        _ => string.Empty,
+    };
     
     private string FormatString(string inputFormat)
     {
         var preTextEnd = inputFormat.IndexOf('{');
         var postTextStart = inputFormat.LastIndexOf('}') + 1;
-        var formattedString = inputFormat;
+        var workingSegment = inputFormat[preTextEnd..postTextStart];
 
-        try
+        // Get all the segments and the text before them
+        // If the segment itself resolves to an empty modifier, we omit the preceding text.
+        var segments = new List<string>();
+        var splits = workingSegment.Split('}');
+        foreach (var segment in splits)
         {
-            // Split the string into individual format specifiers
+            if (segment.IsNullOrEmpty()) continue;
+            
+            var separator = segment[..^2];
+            var location = GetStringForIndex(int.Parse(segment[^1..]));
 
-            // Example List:
-            // {0}
-            // , {1}
-            // , {2}
-            // , {3}
-            var substrings = SubstringSplitRegex().Split(formattedString[preTextEnd..postTextStart]);
-
-            // Get a string with intermediary symbols removed
-            var internalString = substrings
-
-                // Fill each substring with the correct format data
-                .Select(str => str.Format(
-                    currentContinent?.Name.RawString ?? string.Empty,
-                    currentTerritory?.Name.RawString ?? string.Empty,
-                    currentRegion?.Name.RawString ?? string.Empty,
-                    currentSubArea?.Name.RawString ?? string.Empty,
-                    currentWard ?? string.Empty))
-
-                // Starting at the end of each substring, work backwards and replace all non-alphanumeric symbols with empty
-                .Select(substring => DoesNotEndWithAlphanumericRegex().Replace(substring, string.Empty))
-
-                // Append all of the strings together, entries that were entirely separators were replaced with string.Empty
-                .Aggregate(string.Empty, (current, newStr) => current + newStr);
-
-            // Strip non-alphanumeric characters from the start of the internal string
-            internalString = DoesNotStartWithAlphanumericRegex().Replace(internalString, string.Empty);
-
-            if (Config.ShowInstanceNumber)
-            {
-                internalString += GetCharacterForInstanceNumber(UIState.Instance()->AreaInstance.Instance);
-            }
-
-            formattedString = inputFormat[..preTextEnd] + internalString + inputFormat[postTextStart..];
+            if (location.IsNullOrEmpty()) continue;
+            segments.Add($"{separator}{location}");
         }
-        catch (FormatException)
+
+        var internalString = string.Join(string.Empty, segments);
+            
+        if (Config.ShowInstanceNumber)
         {
-            // Ignore format exceptions, because we warn the user in the config window if they are missing a format symbol 
+            internalString += GetCharacterForInstanceNumber(UIState.Instance()->AreaInstance.Instance);
         }
-        catch (ArgumentOutOfRangeException)
-        {
-            // Ignore range exceptions
-        }
-        
-        return formattedString;
+
+        return inputFormat[..preTextEnd] + internalString + inputFormat[postTextStart..];
     }
 
     private static string GetCharacterForInstanceNumber(int instance)
