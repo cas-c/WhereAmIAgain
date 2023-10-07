@@ -86,10 +86,10 @@ public unsafe class DtrDisplay : IDisposable
     public void UpdateDtrText()
     {
         var dtrString = FormatString(Config.FormatString);
-        // var tooltipString = FormatString(Config.TooltipFormatString);
+        var tooltipString = FormatString(Config.TooltipFormatString);
 
         dtrEntry.Text = new SeStringBuilder().AddText(dtrString).BuiltString;
-        // dtrEntry.Tooltip = new SeStringBuilder().AddText(tooltipString).BuiltString;
+        dtrEntry.Tooltip = new SeStringBuilder().AddText(tooltipString).BuiltString;
         locationChanged = false;
     }
 
