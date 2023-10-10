@@ -105,33 +105,47 @@ public unsafe class DtrDisplay : IDisposable
     
     private string FormatString(string inputFormat)
     {
-        var preTextEnd = inputFormat.IndexOf('{');
-        var postTextStart = inputFormat.LastIndexOf('}') + 1;
-        var workingSegment = inputFormat[preTextEnd..postTextStart];
-
-        // Get all the segments and the text before them
-        // If the segment itself resolves to an empty modifier, we omit the preceding text.
-        var segments = new List<string>();
-        var splits = workingSegment.Split('}');
-        foreach (var segment in splits)
+        try
         {
-            if (segment.IsNullOrEmpty()) continue;
-            
-            var separator = segment[..^2];
-            var location = GetStringForIndex(int.Parse(segment[^1..]));
+            var preTextEnd = inputFormat.IndexOf('{');
+            var postTextStart = inputFormat.LastIndexOf('}') + 1;
+            var workingSegment = inputFormat[preTextEnd..postTextStart];
 
-            if (location.IsNullOrEmpty()) continue;
-            segments.Add($"{separator}{location}");
+            // Get all the segments and the text before them
+            // If the segment itself resolves to an empty modifier, we omit the preceding text.
+            var splits = workingSegment.Split('}');
+            var internalString = string.Empty;
+            foreach (var segment in splits)
+            {
+                if (segment.IsNullOrEmpty()) continue;
+
+                var separator = segment[..^2];
+                var location = GetStringForIndex(int.Parse(segment[^1..]));
+
+                if (location.IsNullOrEmpty()) continue;
+                if (internalString == string.Empty)
+                {
+                    internalString += $"{location}";
+                }
+                else
+                {
+                    internalString += $"{separator}{location}";
+                }
+            }
+
+            if (Config.ShowInstanceNumber)
+            {
+                internalString += GetCharacterForInstanceNumber(UIState.Instance()->AreaInstance.Instance);
+            }
+            
+            return inputFormat[..preTextEnd] + internalString + inputFormat[postTextStart..];
         }
-
-        var internalString = string.Join(string.Empty, segments);
-            
-        if (Config.ShowInstanceNumber)
+        catch (Exception)
         {
-            internalString += GetCharacterForInstanceNumber(UIState.Instance()->AreaInstance.Instance);
+            // ignored
         }
-
-        return inputFormat[..preTextEnd] + internalString + inputFormat[postTextStart..];
+        
+        return string.Empty;
     }
 
     private static string GetCharacterForInstanceNumber(int instance)
