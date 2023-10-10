@@ -123,14 +123,7 @@ public unsafe class DtrDisplay : IDisposable
                 var location = GetStringForIndex(int.Parse(segment[^1..]));
 
                 if (location.IsNullOrEmpty()) continue;
-                if (internalString == string.Empty)
-                {
-                    internalString += $"{location}";
-                }
-                else
-                {
-                    internalString += $"{separator}{location}";
-                }
+                internalString += internalString == string.Empty ? $"{location}" : $"{separator}{location}";
             }
 
             if (Config.ShowInstanceNumber)
