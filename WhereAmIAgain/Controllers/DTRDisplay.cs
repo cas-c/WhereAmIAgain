@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text;
-using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Housing;
@@ -88,8 +87,8 @@ public unsafe class DtrDisplay : IDisposable
         var dtrString = FormatString(Config.FormatString);
         var tooltipString = FormatString(Config.TooltipFormatString);
 
-        dtrEntry.Text = new SeStringBuilder().AddText(dtrString).BuiltString;
-        dtrEntry.Tooltip = new SeStringBuilder().AddText(tooltipString).BuiltString;
+        dtrEntry.Text = dtrString;
+        dtrEntry.Tooltip = tooltipString.Replace(@"\n", "\n");
         locationChanged = false;
     }
 
