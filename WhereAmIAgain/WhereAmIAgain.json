@@ -1,10 +1,10 @@
 {
-  "Author": "MidoriKami, cassandra308",
+  "Author": "MidoriKami, cas-c",
   "Name": "Where am I again?",
   "InternalName": "WhereAmIAgain",
   "Description": "Shows what zone/region/territory you are in up in the corner next to the server and time info. Open config with /waia.",
   "ApplicableVersion": "any",
-  "RepoUrl": "https://github.com/cassandra308/WhereAmIAgain",
+  "RepoUrl": "https://github.com/cas-c/WhereAmIAgain",
   "Tags": [ "Area", "Info", "Location", "Overlay", "UI", "Zone" ],
   "CategoryTags": [ "UI" ],
   "Punchline": "Shows what zone/region/territory you are in next to the server info."
