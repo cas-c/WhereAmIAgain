@@ -4,14 +4,14 @@ using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Text;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
-using FFXIVClientStructs.FFXIV.Client.Game.Housing;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using Lumina.Excel.GeneratedSheets;
+using TerritoryType = Lumina.Excel.GeneratedSheets.TerritoryType;
 
 namespace WhereAmIAgain;
 
-public unsafe class DtrDisplay : IDisposable
-{
+public unsafe class DtrDisplay : IDisposable {
     private static Configuration Config => WhereAmIAgainPlugin.Configuration;
 
     private PlaceName? currentContinent;
@@ -35,12 +35,10 @@ public unsafe class DtrDisplay : IDisposable
 
     private bool locationChanged;
     
-    public DtrDisplay()
-    {
+    public DtrDisplay() {
         dtrEntry = Service.DtrBar.Get("Where am I again?");
 
-        dtrEntry.OnClick += () =>
-        {
+        dtrEntry.OnClick += () => {
             WhereAmIAgainPlugin.ConfigurationWindow.Toggle();
         };
         
@@ -48,8 +46,7 @@ public unsafe class DtrDisplay : IDisposable
         Service.ClientState.TerritoryChanged += OnZoneChange;
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
         Service.Framework.Update -= OnFrameworkUpdate;
         Service.ClientState.TerritoryChanged -= OnZoneChange;
 
@@ -57,33 +54,29 @@ public unsafe class DtrDisplay : IDisposable
         dtrEntry.Dispose();
     }
 
-    private void OnFrameworkUpdate(IFramework framework)
-    {
+    private void OnFrameworkUpdate(IFramework framework) {
         if (Service.ClientState.LocalPlayer is null) return;
 
         UpdateRegion();
         UpdateSubArea();
         UpdateTerritory();
 
-        if (WhereAmIAgainPlugin.Configuration.UsePreciseHousingLocation)
-        {
+        if (WhereAmIAgainPlugin.Configuration.UsePreciseHousingLocation) {
             UpdatePreciseHousing();
         }
-        else
-        {
+        else {
             UpdateHousing();
         }
         
-        if (locationChanged)
-        {
+        if (locationChanged) {
             UpdateDtrText();
         }
     }
 
-    private void OnZoneChange(ushort e) => locationChanged = true;
+    private void OnZoneChange(ushort e) 
+        => locationChanged = true;
 
-    public void UpdateDtrText()
-    {
+    public void UpdateDtrText() {
         var dtrString = FormatString(Config.FormatString);
         var tooltipString = FormatString(Config.TooltipFormatString);
 
@@ -92,8 +85,7 @@ public unsafe class DtrDisplay : IDisposable
         locationChanged = false;
     }
 
-    private string GetStringForIndex(int index) => index switch
-    {
+    private string GetStringForIndex(int index) => index switch {
         0 => currentContinent?.Name.RawString ?? string.Empty,
         1 => currentTerritory?.Name.RawString ?? string.Empty,
         2 => currentRegion?.Name.RawString ?? string.Empty,
@@ -102,10 +94,8 @@ public unsafe class DtrDisplay : IDisposable
         _ => string.Empty,
     };
     
-    private string FormatString(string inputFormat)
-    {
-        try
-        {
+    private string FormatString(string inputFormat) {
+        try {
             var preTextEnd = inputFormat.IndexOf('{');
             var postTextStart = inputFormat.LastIndexOf('}') + 1;
             var workingSegment = inputFormat[preTextEnd..postTextStart];
@@ -125,32 +115,27 @@ public unsafe class DtrDisplay : IDisposable
                 internalString += internalString == string.Empty ? $"{location}" : $"{separator}{location}";
             }
 
-            if (Config.ShowInstanceNumber)
-            {
-                internalString += GetCharacterForInstanceNumber(UIState.Instance()->AreaInstance.Instance);
+            if (Config.ShowInstanceNumber) {
+                internalString += GetCharacterForInstanceNumber(UIState.Instance()->PublicInstance.InstanceId);
             }
             
             return inputFormat[..preTextEnd] + internalString + inputFormat[postTextStart..];
         }
-        catch (Exception)
-        {
+        catch (Exception) {
             // ignored
         }
         
         return string.Empty;
     }
 
-    private static string GetCharacterForInstanceNumber(int instance)
-    {
+    private static string GetCharacterForInstanceNumber(int instance) {
         if (instance == 0) return string.Empty;
         
         return $" {((SeIconChar)((int)SeIconChar.Instance1 + (instance - 1))).ToIconChar()}";
     }
 
-    private void UpdateTerritory()
-    {
-        if (lastTerritory != Service.ClientState.TerritoryType)
-        {
+    private void UpdateTerritory() {
+        if (lastTerritory != Service.ClientState.TerritoryType) {
             lastTerritory = Service.ClientState.TerritoryType;
             var territory = Service.DataManager.GetExcelSheet<TerritoryType>()!.GetRow(Service.ClientState.TerritoryType);
 
@@ -160,48 +145,39 @@ public unsafe class DtrDisplay : IDisposable
         }
     }
 
-    private void UpdateSubArea()
-    {
-        if (lastSubArea != AreaInfo->SubAreaPlaceNameID)
-        {
-            lastSubArea = AreaInfo->SubAreaPlaceNameID;
-            currentSubArea = GetPlaceName(AreaInfo->SubAreaPlaceNameID);
+    private void UpdateSubArea() {
+        if (lastSubArea != AreaInfo->SubAreaPlaceNameId) {
+            lastSubArea = AreaInfo->SubAreaPlaceNameId;
+            currentSubArea = GetPlaceName(AreaInfo->SubAreaPlaceNameId);
             locationChanged = true;
         }
     }
 
-    private void UpdateRegion()
-    {
-        if (lastRegion != AreaInfo->AreaPlaceNameID)
-        {
-            lastRegion = AreaInfo->AreaPlaceNameID;
-            currentRegion = GetPlaceName(AreaInfo->AreaPlaceNameID);
+    private void UpdateRegion() {
+        if (lastRegion != AreaInfo->SubAreaPlaceNameId) {
+            lastRegion = AreaInfo->SubAreaPlaceNameId;
+            currentRegion = GetPlaceName(AreaInfo->SubAreaPlaceNameId);
             locationChanged = true;
         }
     }
     
-    private void UpdateHousing()
-    {
-        if (HousingInfo is null || HousingInfo->CurrentTerritory is null)
-        {
+    private void UpdateHousing() {
+        if (HousingInfo is null || HousingInfo->CurrentTerritory is null) {
             currentWard = null;
             return;
         }
 
         var ward = (sbyte) (HousingInfo->GetCurrentWard() + 1);
 
-        if (lastHousingWard != ward)
-        {
+        if (lastHousingWard != ward) {
             lastHousingWard = ward;
             currentWard = $"Ward {ward}";
             locationChanged = true;
         }
     }
     
-    private void UpdatePreciseHousing()
-    {
-        if (HousingInfo is null)
-        {
+    private void UpdatePreciseHousing() {
+        if (HousingInfo is null) {
             currentWard = null;
             return;
         }
@@ -211,8 +187,7 @@ public unsafe class DtrDisplay : IDisposable
         var plot = HousingInfo->GetCurrentPlot();
         var division = HousingInfo->GetCurrentDivision();
 
-        if (ward != lastHousingWard || room != lastHousingRoom || plot != lastHousingPlot || division != lastHousingDivision)
-        {
+        if (ward != lastHousingWard || room != lastHousingRoom || plot != lastHousingPlot || division != lastHousingDivision) {
             lastHousingWard = ward;
             lastHousingRoom = room;
             lastHousingPlot = plot;
@@ -222,8 +197,7 @@ public unsafe class DtrDisplay : IDisposable
         }
     }
 
-    private string GetCurrentHouseAddress() 
-    {
+    private string GetCurrentHouseAddress() {
         var housingManager = HousingManager.Instance();
         if (housingManager == null) return string.Empty;
         var strings = new List<string>();
@@ -238,8 +212,7 @@ public unsafe class DtrDisplay : IDisposable
         strings.Add($"Ward {ward}");
         if (division == 2 || plot is >= 30 or -127) strings.Add($"Subdivision");
 
-        switch (plot) 
-        {
+        switch (plot) {
             case < -1:
                 strings.Add($"Apartment {(room == 0 ? $"Lobby" : $"{room}")}");
                 break;
@@ -255,5 +228,6 @@ public unsafe class DtrDisplay : IDisposable
         return string.Join(" ", strings);
     }
 
-    private static PlaceName? GetPlaceName(uint row) => Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(row);
+    private static PlaceName? GetPlaceName(uint row) 
+        => Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(row);
 }
