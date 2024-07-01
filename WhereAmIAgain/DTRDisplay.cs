@@ -119,7 +119,12 @@ public unsafe class DtrDisplay : IDisposable {
 			return inputFormat[..preTextEnd] + internalString + inputFormat[postTextStart..];
 		}
 		catch (Exception) {
-			// ignored
+			// If the format is empty, it'll throw an exception, but some people might still want instance numbers.
+			if (System.Config.ShowInstanceNumber) {
+				return GetCharacterForInstanceNumber(UIState.Instance()->PublicInstance.InstanceId);
+			}
+
+			// Ignore all other exceptions and return empty.
 		}
 
 		return string.Empty;
