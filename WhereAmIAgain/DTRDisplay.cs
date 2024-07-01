@@ -12,222 +12,219 @@ using TerritoryType = Lumina.Excel.GeneratedSheets.TerritoryType;
 namespace WhereAmIAgain;
 
 public unsafe class DtrDisplay : IDisposable {
-    private static Configuration Config => WhereAmIAgainPlugin.Configuration;
 
-    private PlaceName? currentContinent;
-    private PlaceName? currentTerritory;
-    private PlaceName? currentRegion;
-    private PlaceName? currentSubArea;
-    private string? currentWard;
+	private readonly IDtrBarEntry dtrEntry;
+	private PlaceName? currentContinent;
+	private PlaceName? currentRegion;
+	private PlaceName? currentSubArea;
+	private PlaceName? currentTerritory;
+	private string? currentWard;
+	private byte lastHousingDivision;
+	private sbyte lastHousingPlot;
+	private short lastHousingRoom;
+	private sbyte lastHousingWard;
+	private uint lastRegion;
+	private uint lastSubArea;
 
-    private static TerritoryInfo* AreaInfo => TerritoryInfo.Instance();
-    private static HousingManager* HousingInfo => HousingManager.Instance();
+	private uint lastTerritory;
 
-    private uint lastTerritory;
-    private uint lastRegion;
-    private uint lastSubArea;
-    private sbyte lastHousingWard;
-    private short lastHousingRoom;
-    private sbyte lastHousingPlot;
-    private byte lastHousingDivision;
+	private bool locationChanged;
 
-    private readonly DtrBarEntry dtrEntry;
+	public DtrDisplay() {
+		dtrEntry = Service.DtrBar.Get("Where am I again?");
 
-    private bool locationChanged;
-    
-    public DtrDisplay() {
-        dtrEntry = Service.DtrBar.Get("Where am I again?");
+		dtrEntry.OnClick += () => {
+			System.ConfigurationWindow.Toggle();
+		};
 
-        dtrEntry.OnClick += () => {
-            WhereAmIAgainPlugin.ConfigurationWindow.Toggle();
-        };
-        
-        Service.Framework.Update += OnFrameworkUpdate;
-        Service.ClientState.TerritoryChanged += OnZoneChange;
-    }
+		Service.Framework.Update += OnFrameworkUpdate;
+		Service.ClientState.TerritoryChanged += OnZoneChange;
+	}
 
-    public void Dispose() {
-        Service.Framework.Update -= OnFrameworkUpdate;
-        Service.ClientState.TerritoryChanged -= OnZoneChange;
+	private static TerritoryInfo* AreaInfo => TerritoryInfo.Instance();
+	private static HousingManager* HousingInfo => HousingManager.Instance();
 
-        dtrEntry.OnClick = null;
-        dtrEntry.Dispose();
-    }
+	public void Dispose() {
+		Service.Framework.Update -= OnFrameworkUpdate;
+		Service.ClientState.TerritoryChanged -= OnZoneChange;
 
-    private void OnFrameworkUpdate(IFramework framework) {
-        if (Service.ClientState.LocalPlayer is null) return;
+		dtrEntry.OnClick = null;
+		dtrEntry.Remove();
+	}
 
-        UpdateRegion();
-        UpdateSubArea();
-        UpdateTerritory();
+	private void OnFrameworkUpdate(IFramework framework) {
+		if (Service.ClientState.LocalPlayer is null) return;
 
-        if (WhereAmIAgainPlugin.Configuration.UsePreciseHousingLocation) {
-            UpdatePreciseHousing();
-        }
-        else {
-            UpdateHousing();
-        }
-        
-        if (locationChanged) {
-            UpdateDtrText();
-        }
-    }
+		UpdateRegion();
+		UpdateSubArea();
+		UpdateTerritory();
 
-    private void OnZoneChange(ushort e) 
-        => locationChanged = true;
+		if (System.Config.UsePreciseHousingLocation) {
+			UpdatePreciseHousing();
+		}
+		else {
+			UpdateHousing();
+		}
 
-    public void UpdateDtrText() {
-        var dtrString = FormatString(Config.FormatString);
-        var tooltipString = FormatString(Config.TooltipFormatString);
+		if (locationChanged) {
+			UpdateDtrText();
+		}
+	}
 
-        dtrEntry.Text = dtrString;
-        dtrEntry.Tooltip = tooltipString.Replace(@"\n", "\n");
-        locationChanged = false;
-    }
+	private void OnZoneChange(ushort e)
+		=> locationChanged = true;
 
-    private string GetStringForIndex(int index) => index switch {
-        0 => currentContinent?.Name.RawString ?? string.Empty,
-        1 => currentTerritory?.Name.RawString ?? string.Empty,
-        2 => currentRegion?.Name.RawString ?? string.Empty,
-        3 => currentSubArea?.Name.RawString ?? string.Empty,
-        4 => currentWard ?? string.Empty,
-        _ => string.Empty,
-    };
-    
-    private string FormatString(string inputFormat) {
-        try {
-            var preTextEnd = inputFormat.IndexOf('{');
-            var postTextStart = inputFormat.LastIndexOf('}') + 1;
-            var workingSegment = inputFormat[preTextEnd..postTextStart];
+	public void UpdateDtrText() {
+		var dtrString = FormatString(System.Config.FormatString);
+		var tooltipString = FormatString(System.Config.TooltipFormatString);
 
-            // Get all the segments and the text before them
-            // If the segment itself resolves to an empty modifier, we omit the preceding text.
-            var splits = workingSegment.Split('}');
-            var internalString = string.Empty;
-            foreach (var segment in splits)
-            {
-                if (segment.IsNullOrEmpty()) continue;
+		dtrEntry.Text = dtrString;
+		dtrEntry.Tooltip = tooltipString.Replace(@"\n", "\n");
+		locationChanged = false;
+	}
 
-                var separator = segment[..^2];
-                var location = GetStringForIndex(int.Parse(segment[^1..]));
+	private string GetStringForIndex(int index) => index switch {
+		0 => currentContinent?.Name.RawString ?? string.Empty,
+		1 => currentTerritory?.Name.RawString ?? string.Empty,
+		2 => currentRegion?.Name.RawString ?? string.Empty,
+		3 => currentSubArea?.Name.RawString ?? string.Empty,
+		4 => currentWard ?? string.Empty,
+		_ => string.Empty,
+	};
 
-                if (location.IsNullOrEmpty()) continue;
-                internalString += internalString == string.Empty ? $"{location}" : $"{separator}{location}";
-            }
+	private string FormatString(string inputFormat) {
+		try {
+			var preTextEnd = inputFormat.IndexOf('{');
+			var postTextStart = inputFormat.LastIndexOf('}') + 1;
+			var workingSegment = inputFormat[preTextEnd..postTextStart];
 
-            if (Config.ShowInstanceNumber) {
-                internalString += GetCharacterForInstanceNumber(UIState.Instance()->PublicInstance.InstanceId);
-            }
-            
-            return inputFormat[..preTextEnd] + internalString + inputFormat[postTextStart..];
-        }
-        catch (Exception) {
-            // ignored
-        }
-        
-        return string.Empty;
-    }
+			// Get all the segments and the text before them
+			// If the segment itself resolves to an empty modifier, we omit the preceding text.
+			var splits = workingSegment.Split('}');
+			var internalString = string.Empty;
+			foreach (var segment in splits) {
+				if (segment.IsNullOrEmpty()) continue;
 
-    private static string GetCharacterForInstanceNumber(int instance) {
-        if (instance == 0) return string.Empty;
-        
-        return $" {((SeIconChar)((int)SeIconChar.Instance1 + (instance - 1))).ToIconChar()}";
-    }
+				var separator = segment[..^2];
+				var location = GetStringForIndex(int.Parse(segment[^1..]));
 
-    private void UpdateTerritory() {
-        if (lastTerritory != Service.ClientState.TerritoryType) {
-            lastTerritory = Service.ClientState.TerritoryType;
-            var territory = Service.DataManager.GetExcelSheet<TerritoryType>()!.GetRow(Service.ClientState.TerritoryType);
+				if (location.IsNullOrEmpty()) continue;
+				internalString += internalString == string.Empty ? $"{location}" : $"{separator}{location}";
+			}
 
-            currentTerritory = territory?.PlaceName.Value;
-            currentContinent = territory?.PlaceNameRegion.Value;
-            locationChanged = true;
-        }
-    }
+			if (System.Config.ShowInstanceNumber) {
+				internalString += GetCharacterForInstanceNumber(UIState.Instance()->PublicInstance.InstanceId);
+			}
 
-    private void UpdateSubArea() {
-        if (lastSubArea != AreaInfo->SubAreaPlaceNameId) {
-            lastSubArea = AreaInfo->SubAreaPlaceNameId;
-            currentSubArea = GetPlaceName(AreaInfo->SubAreaPlaceNameId);
-            locationChanged = true;
-        }
-    }
+			return inputFormat[..preTextEnd] + internalString + inputFormat[postTextStart..];
+		}
+		catch (Exception) {
+			// ignored
+		}
 
-    private void UpdateRegion() {
-        if (lastRegion != AreaInfo->SubAreaPlaceNameId) {
-            lastRegion = AreaInfo->SubAreaPlaceNameId;
-            currentRegion = GetPlaceName(AreaInfo->SubAreaPlaceNameId);
-            locationChanged = true;
-        }
-    }
-    
-    private void UpdateHousing() {
-        if (HousingInfo is null || HousingInfo->CurrentTerritory is null) {
-            currentWard = null;
-            return;
-        }
+		return string.Empty;
+	}
 
-        var ward = (sbyte) (HousingInfo->GetCurrentWard() + 1);
+	private static string GetCharacterForInstanceNumber(uint instance) {
+		if (instance == 0) return string.Empty;
 
-        if (lastHousingWard != ward) {
-            lastHousingWard = ward;
-            currentWard = $"Ward {ward}";
-            locationChanged = true;
-        }
-    }
-    
-    private void UpdatePreciseHousing() {
-        if (HousingInfo is null) {
-            currentWard = null;
-            return;
-        }
+		return $" {((SeIconChar) ((int) SeIconChar.Instance1 + (instance - 1))).ToIconChar()}";
+	}
 
-        var ward = HousingInfo->GetCurrentWard();
-        var room = HousingInfo->GetCurrentRoom();
-        var plot = HousingInfo->GetCurrentPlot();
-        var division = HousingInfo->GetCurrentDivision();
+	private void UpdateTerritory() {
+		if (lastTerritory != Service.ClientState.TerritoryType) {
+			lastTerritory = Service.ClientState.TerritoryType;
+			var territory = Service.DataManager.GetExcelSheet<TerritoryType>()!.GetRow(Service.ClientState.TerritoryType);
 
-        if (ward != lastHousingWard || room != lastHousingRoom || plot != lastHousingPlot || division != lastHousingDivision) {
-            lastHousingWard = ward;
-            lastHousingRoom = room;
-            lastHousingPlot = plot;
-            lastHousingDivision = division;
-            currentWard = GetCurrentHouseAddress();
-            locationChanged = true;
-        }
-    }
+			currentTerritory = territory?.PlaceName.Value;
+			currentContinent = territory?.PlaceNameRegion.Value;
+			locationChanged = true;
+		}
+	}
 
-    private string GetCurrentHouseAddress() {
-        var housingManager = HousingManager.Instance();
-        if (housingManager == null) return string.Empty;
-        var strings = new List<string>();
-    
-        var ward = housingManager->GetCurrentWard() + 1;
-        if (ward == 0) return string.Empty;
+	private void UpdateSubArea() {
+		if (lastSubArea != AreaInfo->SubAreaPlaceNameId) {
+			lastSubArea = AreaInfo->SubAreaPlaceNameId;
+			currentSubArea = GetPlaceName(AreaInfo->SubAreaPlaceNameId);
+			locationChanged = true;
+		}
+	}
 
-        var plot = housingManager->GetCurrentPlot();
-        var room = housingManager->GetCurrentRoom();
-        var division = housingManager->GetCurrentDivision();
-    
-        strings.Add($"Ward {ward}");
-        if (division == 2 || plot is >= 30 or -127) strings.Add($"Subdivision");
+	private void UpdateRegion() {
+		if (lastRegion != AreaInfo->SubAreaPlaceNameId) {
+			lastRegion = AreaInfo->SubAreaPlaceNameId;
+			currentRegion = GetPlaceName(AreaInfo->SubAreaPlaceNameId);
+			locationChanged = true;
+		}
+	}
 
-        switch (plot) {
-            case < -1:
-                strings.Add($"Apartment {(room == 0 ? $"Lobby" : $"{room}")}");
-                break;
-            
-            case > -1: 
-                strings.Add($"Plot {plot+1}");
-                if (room > 0) {
-                    strings.Add($"Room {room}");
-                }
-                break;
-        }
+	private void UpdateHousing() {
+		if (HousingInfo is null || HousingInfo->CurrentTerritory is null) {
+			currentWard = null;
+			return;
+		}
 
-        return string.Join(" ", strings);
-    }
+		var ward = (sbyte) (HousingInfo->GetCurrentWard() + 1);
 
-    private static PlaceName? GetPlaceName(uint row) 
-        => Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(row);
+		if (lastHousingWard != ward) {
+			lastHousingWard = ward;
+			currentWard = $"Ward {ward}";
+			locationChanged = true;
+		}
+	}
+
+	private void UpdatePreciseHousing() {
+		if (HousingInfo is null) {
+			currentWard = null;
+			return;
+		}
+
+		var ward = HousingInfo->GetCurrentWard();
+		var room = HousingInfo->GetCurrentRoom();
+		var plot = HousingInfo->GetCurrentPlot();
+		var division = HousingInfo->GetCurrentDivision();
+
+		if (ward != lastHousingWard || room != lastHousingRoom || plot != lastHousingPlot || division != lastHousingDivision) {
+			lastHousingWard = ward;
+			lastHousingRoom = room;
+			lastHousingPlot = plot;
+			lastHousingDivision = division;
+			currentWard = GetCurrentHouseAddress();
+			locationChanged = true;
+		}
+	}
+
+	private string GetCurrentHouseAddress() {
+		var housingManager = HousingManager.Instance();
+		if (housingManager == null) return string.Empty;
+		var strings = new List<string>();
+
+		var ward = housingManager->GetCurrentWard() + 1;
+		if (ward == 0) return string.Empty;
+
+		var plot = housingManager->GetCurrentPlot();
+		var room = housingManager->GetCurrentRoom();
+		var division = housingManager->GetCurrentDivision();
+
+		strings.Add($"Ward {ward}");
+		if (division == 2 || plot is >= 30 or -127) strings.Add($"Subdivision");
+
+		switch (plot) {
+			case < -1:
+				strings.Add($"Apartment {(room == 0 ? $"Lobby" : $"{room}")}");
+				break;
+
+			case > -1:
+				strings.Add($"Plot {plot + 1}");
+				if (room > 0) {
+					strings.Add($"Room {room}");
+				}
+				break;
+		}
+
+		return string.Join(" ", strings);
+	}
+
+	private static PlaceName? GetPlaceName(uint row)
+		=> Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(row);
 }

@@ -1,23 +1,46 @@
-﻿using Dalamud.Plugin;
+﻿using Dalamud.Game.Command;
+using Dalamud.Plugin;
 
 namespace WhereAmIAgain;
 
 public sealed class WhereAmIAgainPlugin : IDalamudPlugin {
-    public static Configuration Configuration { get; set; } = null!;
-    public static ConfigurationWindow ConfigurationWindow { get; set; } = null!;
-    public static DtrDisplay DtrDisplay { get; set; } = null!;
-    
-    public WhereAmIAgainPlugin(DalamudPluginInterface pluginInterface) {
-        pluginInterface.Create<Service>();
-            
-        Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+	private const string CommandName = "/waia";
 
-        DtrDisplay = new DtrDisplay();
-        ConfigurationWindow = new ConfigurationWindow();
-    }
+	public WhereAmIAgainPlugin(IDalamudPluginInterface pluginInterface) {
+		pluginInterface.Create<Service>();
 
-    public void Dispose() {
-        ConfigurationWindow.Dispose();
-        DtrDisplay.Dispose();
-    }
+		System.Config = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+
+		Service.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
+			HelpMessage = "Open configuration window",
+		});
+
+		System.DtrDisplay = new DtrDisplay();
+
+		System.WindowSystem = new("Where am I again?");
+		System.ConfigurationWindow = new ConfigurationWindow();
+		System.WindowSystem.AddWindow(System.ConfigurationWindow);
+
+		Service.PluginInterface.UiBuilder.Draw += DrawUi;
+		Service.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUi;
+	}
+
+	public void Dispose() {
+		Service.PluginInterface.UiBuilder.Draw -= DrawUi;
+		Service.PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUi;
+
+		System.WindowSystem.RemoveAllWindows();
+		Service.CommandManager.RemoveHandler(CommandName);
+
+		System.DtrDisplay.Dispose();
+	}
+
+	private void OnCommand(string command, string arguments)
+		=> System.ConfigurationWindow.Toggle();
+
+	private void DrawUi()
+		=> System.WindowSystem.Draw();
+
+	private void DrawConfigUi()
+		=> System.ConfigurationWindow.Toggle();
 }

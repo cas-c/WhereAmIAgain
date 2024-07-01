@@ -1,13 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/9.0.1">
+﻿<Project Sdk="Dalamud.NET.Sdk/9.0.2">
   <PropertyGroup>
 	<AssemblyVersion>1.0.0.3</AssemblyVersion>
     <Description>Shows what zone/region/territory you are in next to the server info.</Description>
     <PackageProjectUrl>https://github.com/cas-c/WhereAmIAgain</PackageProjectUrl>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="packages.lock.json" />
-    <None Remove="WhereAmIAgain.json" />
-  </ItemGroup>
 </Project>
