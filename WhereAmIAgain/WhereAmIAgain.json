@@ -7,5 +7,6 @@
   "RepoUrl": "https://github.com/cas-c/WhereAmIAgain",
   "Tags": [ "Area", "Info", "Location", "Overlay", "UI", "Zone" ],
   "CategoryTags": [ "UI" ],
-  "Punchline": "Shows what zone/region/territory you are in next to the server info."
+  "Punchline": "Shows what zone/region/territory you are in next to the server info.",
+  "AcceptsFeedback": false
 }
