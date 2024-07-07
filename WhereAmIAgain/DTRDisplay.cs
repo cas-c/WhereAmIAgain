@@ -156,9 +156,9 @@ public unsafe class DtrDisplay : IDisposable {
 	}
 
 	private void UpdateRegion() {
-		if (lastRegion != AreaInfo->SubAreaPlaceNameId) {
-			lastRegion = AreaInfo->SubAreaPlaceNameId;
-			currentRegion = GetPlaceName(AreaInfo->SubAreaPlaceNameId);
+		if (lastRegion != AreaInfo->AreaPlaceNameId) {
+			lastRegion = AreaInfo->AreaPlaceNameId;
+			currentRegion = GetPlaceName(AreaInfo->AreaPlaceNameId);
 			locationChanged = true;
 		}
 	}
