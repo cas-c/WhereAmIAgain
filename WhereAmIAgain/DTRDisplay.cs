@@ -6,8 +6,7 @@ using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
-using Lumina.Excel.GeneratedSheets;
-using TerritoryType = Lumina.Excel.GeneratedSheets.TerritoryType;
+using Lumina.Excel.Sheets;
 
 namespace WhereAmIAgain;
 
@@ -84,10 +83,10 @@ public unsafe class DtrDisplay : IDisposable {
 	}
 
 	private string GetStringForIndex(int index) => index switch {
-		0 => currentContinent?.Name.RawString ?? string.Empty,
-		1 => currentTerritory?.Name.RawString ?? string.Empty,
-		2 => currentRegion?.Name.RawString ?? string.Empty,
-		3 => currentSubArea?.Name.RawString ?? string.Empty,
+		0 => currentContinent?.Name.ExtractText() ?? string.Empty,
+		1 => currentTerritory?.Name.ExtractText() ?? string.Empty,
+		2 => currentRegion?.Name.ExtractText() ?? string.Empty,
+		3 => currentSubArea?.Name.ExtractText() ?? string.Empty,
 		4 => currentWard ?? string.Empty,
 		_ => string.Empty,
 	};
@@ -139,10 +138,10 @@ public unsafe class DtrDisplay : IDisposable {
 	private void UpdateTerritory() {
 		if (lastTerritory != Service.ClientState.TerritoryType) {
 			lastTerritory = Service.ClientState.TerritoryType;
-			var territory = Service.DataManager.GetExcelSheet<TerritoryType>()!.GetRow(Service.ClientState.TerritoryType);
+			var territory = Service.DataManager.GetExcelSheet<TerritoryType>().GetRow(Service.ClientState.TerritoryType);
 
-			currentTerritory = territory?.PlaceName.Value;
-			currentContinent = territory?.PlaceNameRegion.Value;
+			currentTerritory = territory.PlaceName.Value;
+			currentContinent = territory.PlaceNameRegion.Value;
 			locationChanged = true;
 		}
 	}
@@ -230,6 +229,6 @@ public unsafe class DtrDisplay : IDisposable {
 		return string.Join(" ", strings);
 	}
 
-	private static PlaceName? GetPlaceName(uint row)
-		=> Service.DataManager.GetExcelSheet<PlaceName>()!.GetRow(row);
+	private static PlaceName GetPlaceName(uint row)
+		=> Service.DataManager.GetExcelSheet<PlaceName>().GetRow(row);
 }
