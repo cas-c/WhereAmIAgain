@@ -138,7 +138,7 @@ public unsafe class DtrDisplay : IDisposable {
 	private void UpdateTerritory() {
 		if (lastTerritory != Service.ClientState.TerritoryType) {
 			lastTerritory = Service.ClientState.TerritoryType;
-			var territory = Service.DataManager.GetExcelSheet<TerritoryType>().GetRow(Service.ClientState.TerritoryType);
+			var territory = GetCurrentTerritory();
 
 			currentTerritory = territory.PlaceName.Value;
 			currentContinent = territory.PlaceNameRegion.Value;
@@ -231,4 +231,13 @@ public unsafe class DtrDisplay : IDisposable {
 
 	private static PlaceName GetPlaceName(uint row)
 		=> Service.DataManager.GetExcelSheet<PlaceName>().GetRow(row);
+
+	private static TerritoryType GetCurrentTerritory() {
+		if (HousingInfo is not null && HousingInfo->IsInside()) {
+			return Service.DataManager.GetExcelSheet<TerritoryType>().GetRow(HousingManager.GetOriginalHouseTerritoryTypeId());
+		}
+		else {
+			return Service.DataManager.GetExcelSheet<TerritoryType>().GetRow(Service.ClientState.TerritoryType);
+		}
+	}
 }
