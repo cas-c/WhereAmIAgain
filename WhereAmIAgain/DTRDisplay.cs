@@ -32,7 +32,7 @@ public unsafe class DtrDisplay : IDisposable {
 	public DtrDisplay() {
 		dtrEntry = Service.DtrBar.Get("Where am I again?");
 
-		dtrEntry.OnClick += () => {
+		dtrEntry.OnClick += (_) => {
 			System.ConfigurationWindow.Toggle();
 		};
 

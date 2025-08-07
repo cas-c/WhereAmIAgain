@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhereAmIAgain", "WhereAmIAgain\WhereAmIAgain.csproj", "{13C812E9-0D42-4B95-8646-40EEBF30636F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhereAmIAgain", "WhereAmIAgain\WhereAmIAgain.csproj", "{AB22FDC6-FC8E-7C18-5869-7A37819977AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{13C812E9-0D42-4B95-8646-40EEBF30636F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{13C812E9-0D42-4B95-8646-40EEBF30636F}.Debug|x64.Build.0 = Debug|Any CPU
-		{13C812E9-0D42-4B95-8646-40EEBF30636F}.Release|x64.ActiveCfg = Release|x64
-		{13C812E9-0D42-4B95-8646-40EEBF30636F}.Release|x64.Build.0 = Release|x64
+		{AB22FDC6-FC8E-7C18-5869-7A37819977AF}.Debug|x64.ActiveCfg = Debug|x64
+		{AB22FDC6-FC8E-7C18-5869-7A37819977AF}.Debug|x64.Build.0 = Debug|x64
+		{AB22FDC6-FC8E-7C18-5869-7A37819977AF}.Release|x64.ActiveCfg = Release|x64
+		{AB22FDC6-FC8E-7C18-5869-7A37819977AF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
