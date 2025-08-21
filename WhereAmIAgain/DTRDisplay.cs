@@ -76,7 +76,7 @@ public unsafe class DtrDisplay : IDisposable {
 
 	public void UpdateDtrText() {
 		var dtrString = FormatString(System.Config.FormatString);
-		var tooltipString = FormatString(System.Config.TooltipFormatString);
+		var tooltipString = FormatString(System.Config.TooltipFormatString).Trim();
 
 		dtrEntry.Text = dtrString;
 		dtrEntry.Tooltip = tooltipString.Replace(@"\n", "\n");
