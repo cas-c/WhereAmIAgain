@@ -26,6 +26,7 @@ public unsafe class DtrDisplay : IDisposable {
 	private uint lastSubArea;
 
 	private uint lastTerritory;
+	private uint lastInstanceId;
 
 	private bool locationChanged;
 
@@ -136,13 +137,14 @@ public unsafe class DtrDisplay : IDisposable {
 	}
 
 	private void UpdateTerritory() {
-		if (lastTerritory != Service.ClientState.TerritoryType) {
+		if (lastTerritory != Service.ClientState.TerritoryType || lastInstanceId != UIState.Instance()->PublicInstance.InstanceId) {
 			lastTerritory = Service.ClientState.TerritoryType;
 			var territory = GetCurrentTerritory();
 
 			currentTerritory = territory.PlaceName.Value;
 			currentContinent = territory.PlaceNameRegion.Value;
-			locationChanged = true;
+			lastInstanceId = UIState.Instance()->PublicInstance.InstanceId;
+            locationChanged = true;
 		}
 	}
 
