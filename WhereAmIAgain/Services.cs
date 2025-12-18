@@ -12,4 +12,5 @@ public class Service {
 	[PluginService] public static IDtrBar DtrBar { get; set; }
 	[PluginService] public static IFramework Framework { get; set; }
 	[PluginService] public static ICommandManager CommandManager { get; set; }
+	[PluginService] public static IPlayerState PlayerState { get; set; }
 }

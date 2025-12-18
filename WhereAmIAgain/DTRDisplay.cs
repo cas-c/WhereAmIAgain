@@ -53,7 +53,7 @@ public unsafe class DtrDisplay : IDisposable {
 	}
 
 	private void OnFrameworkUpdate(IFramework framework) {
-		if (Service.ClientState.LocalPlayer is null) return;
+		if (!Service.PlayerState.IsLoaded) return;
 
 		UpdateRegion();
 		UpdateSubArea();
