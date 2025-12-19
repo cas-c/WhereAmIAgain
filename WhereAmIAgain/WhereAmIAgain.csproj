@@ -1,4 +1,4 @@
-﻿<Project Sdk="Dalamud.NET.Sdk/14.0.0">
+﻿<Project Sdk="Dalamud.NET.Sdk/14.0.1">
   <PropertyGroup>
       <AssemblyVersion>2.1.1.5</AssemblyVersion>
     <Description>Shows what zone/region/territory you are in next to the server info.</Description>
