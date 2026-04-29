@@ -71,7 +71,7 @@ public unsafe class DtrDisplay : IDisposable {
 		}
 	}
 
-	private void OnZoneChange(ushort e)
+	private void OnZoneChange(uint e)
 		=> locationChanged = true;
 
 	public void UpdateDtrText() {
