@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Dalamud.NET.Sdk/15.0.0">
   <PropertyGroup>
-      <AssemblyVersion>2.1.1.5</AssemblyVersion>
+      <AssemblyVersion>2.1.1.6</AssemblyVersion>
     <Description>Shows what zone/region/territory you are in next to the server info.</Description>
     <PackageProjectUrl>https://github.com/cas-c/WhereAmIAgain</PackageProjectUrl>
     <NoWarn>$(NoWarn);MSB3277</NoWarn>
